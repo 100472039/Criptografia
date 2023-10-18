@@ -29,19 +29,19 @@ def verificar(key, salt, newpassword):
     )
 
     try: out=kdf.verify(newpassword, key) 
-    except: print("Password is not correct")
+    except: return False
     else: 
         if out==None:
-            print("Password is correct")
+           return True
         else:
-            print("qué mierdas es esto?")
+            return False
 
-#contraseña buena
-password = b"hola"
+# #contraseña buena
+# password = b"hola"
 
-#preguntar password
-newpassword = input("Introduzca su contraseña: ")
-newpassword = bytes(newpassword, encoding='utf-8')
+# #preguntar password
+# newpassword = input("Introduzca su contraseña: ")
+# newpassword = bytes(newpassword, encoding='utf-8')
 
-key, salt = derivar(password)
-verificar(key, salt, newpassword)
+# key, salt = derivar(password)
+# verificar(key, salt, newpassword)

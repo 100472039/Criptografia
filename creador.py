@@ -41,7 +41,3 @@ def add(usuario, contraseña, salt, contraseña_sin_encriptar):
 
     print("Nuevos datos añadidos al archivo JSON correctamente.")
 
-
-
-#crear_json()
-add("Alberto", 1234, "tusalt", "simio")
