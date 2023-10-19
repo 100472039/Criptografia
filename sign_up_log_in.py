@@ -22,4 +22,3 @@ def log_in():
     else:
         print("contraseña incorrecta")
 
-sign_up()
