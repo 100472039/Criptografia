@@ -41,3 +41,25 @@ def add(usuario, contraseña, salt, contraseña_sin_encriptar):
 
     print("Nuevos datos añadidos al archivo JSON correctamente.")
 
+def registrar(usuario, contraseña):
+    path = "json/registro.json"
+    # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
+    try:
+        with open(path, "r") as archivo_json:
+            datos_existentes = json.load(archivo_json)
+    except FileNotFoundError:
+        datos_existentes = []
+    
+    # Añadir nuevos datos al diccionario existente
+    nuevos_datos = {
+        "Username": usuario,
+        "Password": contraseña,
+    }
+
+    datos_existentes.append(nuevos_datos)
+
+    # Escribir el diccionario actualizado de vuelta al archivo JSON
+    with open(path, "w") as archivo_json:
+        json.dump(datos_existentes, archivo_json, indent=4)
+
+    print("Nuevos datos añadidos al archivo JSON correctamente.")

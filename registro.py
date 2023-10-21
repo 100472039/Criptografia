@@ -1,14 +1,21 @@
 from tkinter import *
-from creador import *
+import creador
 
 def register_user():
     username_info = username.get()
     password_info = password.get()
 
+    print(username)
+    print(username_info)
+
+    """
     file = open(username_info+".txt", "w")
     file.write(username_info+"\n")
     file.write(password_info)
     file.close()
+    """
+
+    creador.registrar(username_info, password_info)
 
     username_entry.delete(0, END)
     password_entry.delete(0, END)
