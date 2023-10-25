@@ -1,3 +1,3 @@
-from registro import *
+from interfaz import *
 
 main_screen()

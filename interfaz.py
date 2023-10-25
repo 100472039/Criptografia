@@ -6,9 +6,6 @@ def register_user():
     username_info = username.get()
     password_info = password.get()
 
-    print(username)
-    print(username_info)
-
     """
     file = open(username_info+".txt", "w")
     file.write(username_info+"\n")
@@ -26,18 +23,24 @@ def register_user():
 def login_user():
     username_info = actual_username.get()
     password_info = actual_password.get()
-
-    print(actual_username)
-    print(username_info)
-    print(actual_password)
-    print(password_info)
+    data = StringVar()
 
     with open("json/registro.json", 'r') as archivo:
         file = json.load(archivo)
 
     for entry in file:
         if entry["Username"] == username_info and entry["Password"] == password_info:
-            print(entry)
+            # screen_archivo = Toplevel(screen)
+            # screen_archivo.title("Añadir archivo")
+            # screen_archivo.geometry("300x250")
+            screen_login.geometry("300x300")
+            Label(screen_login, text="")
+            Label(screen_login, text="Introduzca el archivo encriptado").pack()
+            Entry(screen_login, textvariable=data).pack()
+            Button(screen_login, text="Enviar", width=10, height=1).pack()
+
+def arhivo():
+    ...
 
 def register():
     global username
@@ -64,6 +67,7 @@ def register():
 
 
 def login():
+    global screen_login
     global actual_username
     global actual_password
     screen_login = Toplevel(screen)

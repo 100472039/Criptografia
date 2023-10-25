@@ -1,0 +1,10 @@
+1.Autenticacion de usuarios:
+    - Realizar el salt con los datos
+    - Encriptar contraseña
+2. Cifrado y descifrado simétrico:
+    - Incorporar intercambio de contraseña
+    - Pasar datos encriptados
+    - Guardar datos con la encriptación
+3. Generación/verificación de etiquetas de autenticación de mensajes
+    - Generar hash
+    - Encriptar hash
