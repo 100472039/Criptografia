@@ -1,10 +1,12 @@
 import json
 from tkinter import *
 import creador
+import kdf
 
 def register_user():
     username_info = username.get()
     password_info = password.get()
+    # simmetric_info = new_simmetric.get()
 
     """
     file = open(username_info+".txt", "w")
@@ -12,8 +14,9 @@ def register_user():
     file.write(password_info)
     file.close()
     """
+    key, salt = kdf.derivar(password_info)
 
-    creador.registrar(username_info, password_info)
+    creador.registrar(username_info, str(key), str(salt))
 
     new_username.delete(0, END)
     new_password.delete(0, END)
@@ -25,11 +28,16 @@ def login_user():
     password_info = actual_password.get()
     data = StringVar()
 
+    key, salt = kdf.derivar(password_info)
+
     with open("json/registro.json", 'r') as archivo:
         file = json.load(archivo)
 
     for entry in file:
-        if entry["Username"] == username_info and entry["Password"] == password_info:
+        if entry["Username"] == username_info:
+            print(entry["salt"])
+            print(str(salt))
+        if entry["Username"] == username_info and entry["salt"] == str(salt):
             # screen_archivo = Toplevel(screen)
             # screen_archivo.title("Añadir archivo")
             # screen_archivo.geometry("300x250")
@@ -47,6 +55,7 @@ def register():
     global password
     global new_username
     global new_password
+    global new_simmetric
     global screen_registro
     screen_registro = Toplevel(screen)
     screen_registro.title("Registro")
@@ -63,6 +72,9 @@ def register():
     Label(screen_registro, text="Contraseña * ").pack()
     new_password = Entry(screen_registro, textvariable=password)
     new_password.pack()
+    # Label(screen_registro, text="Contraseña simétrica * ").pack()
+    # new_simmetric = Entry(screen_registro, textvariable=password)
+    # new_simmetric.pack()
     Button(screen_registro, text="Registrarse", width=10, height=1, command=register_user).pack()
 
 

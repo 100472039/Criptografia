@@ -6,6 +6,8 @@ from cryptography.hazmat.primitives import hashes
 
 def derivar (password):
 
+    password = bytes(password, encoding='utf-8')
+
     #salt generada aleatoriamente
     salt = os.urandom(16)
 
@@ -17,7 +19,7 @@ def derivar (password):
         iterations=480000,
     )
     key= kdf.derive(password)
-    return key, salt;
+    return key, salt
 
 def verificar(key, salt, newpassword):
     # verify
