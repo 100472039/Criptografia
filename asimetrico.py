@@ -52,3 +52,4 @@ def descifrado_simetrico(simetrica, cifrado):
     except Exception as e:
         print(f'Error al descifrar el mensaje: {e}')
         return None
+    

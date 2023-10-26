@@ -13,5 +13,20 @@
         "Username": "ague",
         "key": "d902b5f9e0b3637fb8dc4535a58ec31f1ea8af28cb9b1e8a49d1ba7c5c7d782b",
         "salt": "f6ea4a60a7c8c163a1809ebc4fd118b0"
+    },
+    {
+        "Username": "albertito",
+        "key": "28cc8053c26362a59aeac24c852e1700a5452225edb2ef69b6dfd8fa5dcf1da2",
+        "salt": "078997cafe43bd3bf347908182b56d04"
+    },
+    {
+        "Username": "ague",
+        "key": "8fd1a0bca5257627f4794280538eb0ea3eb933a2881b209f94d594fdf53a2837",
+        "salt": "b7be9263f5cf79efe77bd931efca3970"
+    },
+    {
+        "Username": "holahola",
+        "key": "4d50905c430e85d2d161549d91b07caf2f741808f812d57b545e434aa9578380",
+        "salt": "e5ff586e9b9d5bcba2acca32ba247856"
     }
 ]
