@@ -1,3 +1,4 @@
+import json
 import os 
 #from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 #eso no lo necesitamos todavía
@@ -47,4 +48,4 @@ def verificar(key, salt, newpassword: str):
 
 
 # key, salt = derivar(password)
-# print(verificar(key, salt, newpassword))
+# verificar(key, salt, newpassword)
