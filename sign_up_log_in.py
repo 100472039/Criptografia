@@ -7,7 +7,7 @@ def sign_up():
     user=input("Introduzca su user: ")
     password = input("Introduzca su contraseña: ")
     key, salt = derivar(password)
-    registrar(user, str(key), str(salt))
+    registrar(user, key, salt)
 
 
 def log_in():
@@ -22,17 +22,33 @@ def log_in():
             datos_existentes = json.load(archivo_json)
     except FileNotFoundError:
         print("No hay datos en el registro")
+    
 
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
             print("User es ", user)
-            key=datos_existentes[i]["key"]
-            salt=datos_existentes[i]["salt"]
+            key=bytes.fromhex(datos_existentes[i]["key"])
+            salt=bytes.fromhex(datos_existentes[i]["salt"])
 
             if verificar(key, salt, newpassword):
                 print("contraseña correcta")
+                found=True
+                
             else:
                 print("contraseña incorrecta")
+                found=False
+            break
+        else:
+            found=False
+
+    if found:
+        return True
+    else:
+        return False
+        
+
+
+
 
 
 

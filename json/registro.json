@@ -1,22 +1,17 @@
 [
     {
-        "Username": "manolo",
-        "key": "b'0\\xb1/\\xdcP\\\\%(*\\x9f<Qa,D\\xe44}p\\x18a\\x82\\x98\\x0f%V\\x05&\\xf5RS\\xc7'",
-        "salt": "b'V\\xc7H\\xc7\\xc3v\\xc9r\\xa7\\xb0\\xf6 \\xfe\\xdb;3'"
+        "Username": "gg",
+        "key": "d9748ee26be2adbc0ac9fb77ab0c2d036e3e4d060baddd60fb83a35e262c743c",
+        "salt": "d07b52821bfff3f8f2fb47c62085878e"
     },
     {
-        "Username": "manolo",
-        "key": "b'\\xc5\\x06,\\xd3\\xe3@\\x1eU` \\xa8\\x1a\\x11a[\\x93M-\\xa6\\x96\\x13\\xa5%u\\x19@\\xc5M\\x9a\\xec\\xc8\\x83'",
-        "salt": "b'\\xea\\\\\\xf9\\xac\\xdc\\xba\\x94\\xe0\\xd6\\xe2\\x84[\\x9f3\\xa9i'"
+        "Username": "hola",
+        "key": "697126d999dbd62e84f954b2d26d07e37424dcfb2b3c45bcdedc8b305d051f23",
+        "salt": "2dc9fe426c0d184aae600f1919c6ba96"
     },
     {
-        "Username": "1",
-        "key": "b'\\x8e\\x065\\x9c\\xc3\\x00_\\xbd\\xff\\xa8-\\xb7?X1\\x03\\xc2N\\xbdB?\\xeag\\x0cS\\x06\\x1f*\\xfb\\xc6!\\x1d'",
-        "salt": "b'\\x11Z\\x10\\xf5O\\x06\\x14\\xdf\\xc2\\x17y\\xd15NYH'"
-    },
-    {
-        "Username": "1",
-        "key": "b'\\x05nuu!Ut\\xf2\\xe4\\xd6J5dx\\xef\\x9eK\\xbf\\xfd3\\x19B\\xec\\x8a\\xe7\\x7fWN\\x0c\\x7fi\\xb2'",
-        "salt": "b'1\\xe8\\xb1R\\x07\\x1b\\xca\\xfb\\xe5p\\x97\\xb0;\\x93h\\xcf'"
+        "Username": "ague",
+        "key": "d902b5f9e0b3637fb8dc4535a58ec31f1ea8af28cb9b1e8a49d1ba7c5c7d782b",
+        "salt": "f6ea4a60a7c8c163a1809ebc4fd118b0"
     }
 ]

@@ -7,8 +7,6 @@ from cryptography.hazmat.primitives import hashes
 
 def derivar (password: str):
 
-    password = bytes(password, encoding='utf-8')
-
     #salt generada aleatoriamente
     salt = os.urandom(16)
 
@@ -19,8 +17,8 @@ def derivar (password: str):
         salt=salt,
         iterations=480000,
     )
-    key= kdf.derive(password)
-    return key, salt
+    key= kdf.derive(password.encode())
+    return key.hex(), salt.hex()
 
 def verificar(key, salt, newpassword: str):
     # verify
@@ -30,8 +28,7 @@ def verificar(key, salt, newpassword: str):
         salt=salt,
         iterations=480000,
     )
-    newpassword = bytes(newpassword, encoding='utf-8')
-    try: out=kdf.verify(newpassword, key) 
+    try: out=kdf.verify(newpassword.encode(), key) 
     except: return False
     else: 
         if out==None:
@@ -40,7 +37,7 @@ def verificar(key, salt, newpassword: str):
             return False
 
 # #contraseña buena
-# password = "hola"
+# password = "holahola"
 
 
 # #preguntar password
@@ -48,4 +45,6 @@ def verificar(key, salt, newpassword: str):
 
 
 # key, salt = derivar(password)
-# verificar(key, salt, newpassword)
+# print("key is", key)
+# print("salt is", salt)
+# print(verificar(key, salt, newpassword))
