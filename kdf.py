@@ -30,9 +30,9 @@ def verificar(key, salt, newpassword: str):
     )
     try: out=kdf.verify(newpassword.encode(), key) 
     except: return False
-    else: 
+    else:
         if out==None:
-           return True
+            return True
         else:
             return False
 

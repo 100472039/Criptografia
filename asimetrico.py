@@ -8,8 +8,8 @@ from cryptography.hazmat.backends import default_backend
 
 
 # Generar claves asimétricas
-privada = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-publica = privada.public_key()
+privada_base = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+publica_base = privada_base.public_key()
 
 
 # Generar clave simétrica
@@ -70,6 +70,18 @@ def descifrado_simetrico(simetrica, cifrado, tag):
     except Exception:
         print(f'Error al descifrar el mensaje o verificar la autenticidad: {Exception}')
         return None
+
+def session_keys(user):
+    #se inicia sesión
+    # Generar clave simétrica
+    simetrica = Fernet.generate_key()
+    sim_cifrada=cifrar_con_publica(publica_base, simetrica)
+
+    #se mandaría simétrica a la base de datos
+    #base de datos descifra simétrica con su privada
+    descifrar_con_privada(sim_cifrada, privada_base)
+    
+
 
 
 # Ejemplo de uso

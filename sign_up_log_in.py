@@ -1,6 +1,16 @@
 
 from kdf import *
 from creador import *
+from asimetrico import *
+
+
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hmac
+from cryptography.hazmat.backends import default_backend
 
 def sign_up():
     print("SIGN UP")
@@ -59,4 +69,16 @@ def log_in():
     # else:
     #     print("contraseña incorrecta")
 
-log_in()
+
+
+
+
+if buscar(user, newpassword):
+    #se inicia sesión
+    # Generar clave simétrica
+    simetrica = Fernet.generate_key()
+    sim_cifrada=cifrar_con_publica(publica_base, simetrica)
+
+
+    #se mandaría simétrica a la base de datos
+
