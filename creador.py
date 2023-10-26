@@ -1,4 +1,5 @@
 import json
+from kdf import *
 
 path = "json/datos.json"
 
@@ -64,3 +65,35 @@ def registrar(usuario, key, salt):
         json.dump(datos_existentes, archivo_json, indent=4)
 
     print("Nuevos datos añadidos al archivo JSON correctamente.")
+
+def buscar(user, newpassword):
+    path = "json/registro.json"
+    # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
+    try:
+        with open(path, "r") as archivo_json:
+            datos_existentes = json.load(archivo_json)
+    except FileNotFoundError:
+        print("No hay datos en el registro")
+    
+
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"]==user:
+            print("User es ", user)
+            key=bytes.fromhex(datos_existentes[i]["key"])
+            salt=bytes.fromhex(datos_existentes[i]["salt"])
+
+            if verificar(key, salt, newpassword):
+                print("contraseña correcta")
+                found=True
+                
+            else:
+                print("contraseña incorrecta")
+                found=False
+            break
+        else:
+            found=False
+
+    if found:
+        return True
+    else:
+        return False

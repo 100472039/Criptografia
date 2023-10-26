@@ -9,12 +9,6 @@ def register_user():
     password_info = password.get()
     # simmetric_info = new_simmetric.get()
 
-    """
-    file = open(username_info+".txt", "w")
-    file.write(username_info+"\n")
-    file.write(password_info)
-    file.close()
-    """
     key, salt = derivar(password_info)
     registrar(username_info, key, salt)
 
@@ -24,77 +18,35 @@ def register_user():
     Label(screen_registro, text="Éxito al registrarse", fg="green", font=("Calibri", 11)).pack()
 
 def login_user():
-    # username_info = actual_username.get()
-    # password_info = actual_password.get()
-    # data = StringVar()
-
-    # key, salt = kdf.derivar(password_info)
-
-    # with open("json/registro.json", 'r') as archivo:
-    #     file = json.load(archivo)
-
-    # for entry in file:
-    #     if entry["Username"] == username_info:
-    #         print(entry["salt"])
-    #         print(str(salt))
-    #     if entry["Username"] == username_info and entry["salt"] == str(salt):
-    #         # screen_archivo = Toplevel(screen)
-    #         # screen_archivo.title("Añadir archivo")
-    #         # screen_archivo.geometry("300x250")
-    #         screen_login.geometry("300x300")
-    #         Label(screen_login, text="")
-    #         Label(screen_login, text="Introduzca el archivo encriptado").pack()
-    #         Entry(screen_login, textvariable=data).pack()
-    #         Button(screen_login, text="Enviar", width=10, height=1).pack()
 
     user = actual_username.get()
     newpassword = actual_password.get()
 
-    path = "json/registro.json"
-    # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
-    try:
-        with open(path, "r") as archivo_json:
-            datos_existentes = json.load(archivo_json)
-    except FileNotFoundError:
-        print("No hay datos en el registro")
-    
+    data = StringVar()
 
-    for i in range(len(datos_existentes)):
-        if datos_existentes[i]["Username"]==user:
-            print("User es ", user)
-            key=bytes.fromhex(datos_existentes[i]["key"])
-            salt=bytes.fromhex(datos_existentes[i]["salt"])
-
-            if verificar(key, salt, newpassword):
-                print("contraseña correcta")
-                found=True
-                
-            else:
-                print("contraseña incorrecta")
-                found=False
-            break
-        else:
-            found=False
-
-    if found:
-        screen_login.geometry("300x300")
-        Label(screen_login, text="")
-        Label(screen_login, text="Introduzca el archivo encriptado").pack()
-        Entry(screen_login, textvariable=data).pack()
-        Button(screen_login, text="Enviar", width=10, height=1).pack()
+    if buscar(user, newpassword):
+        screen_login.destroy()
+        screen_data = Toplevel(screen)
+        screen_data.geometry("300x250")
+        screen_data.title("Hola, "+str(user))
+        Label(screen_data, text="").pack()
+        Label(screen_data, text="Introduzca el archivo de audio").pack()
+        Label(screen_data, text="").pack()
+        Label(screen_data, text="").pack()
+        Entry(screen_data, textvariable=data).pack()
+        Label(screen_data, text="").pack()
+        Label(screen_data, text="").pack()
+        Button(screen_data, text="Enviar", width=10, height=1).pack()
+    else:
+        Label(screen_login, text="Combinación incorrecta", fg="red", font=("Calibri", 11)).pack()
     
     
-
-
-def arhivo():
-    ...
 
 def register():
     global username
     global password
     global new_username
     global new_password
-    global new_simmetric
     global screen_registro
     screen_registro = Toplevel(screen)
     screen_registro.title("Registro")
@@ -111,9 +63,6 @@ def register():
     Label(screen_registro, text="Contraseña * ").pack()
     new_password = Entry(screen_registro, textvariable=password)
     new_password.pack()
-    # Label(screen_registro, text="Contraseña simétrica * ").pack()
-    # new_simmetric = Entry(screen_registro, textvariable=password)
-    # new_simmetric.pack()
     Button(screen_registro, text="Registrarse", width=10, height=1, command=register_user).pack()
 
 
