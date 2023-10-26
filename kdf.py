@@ -4,7 +4,7 @@ import os
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 
-def derivar (password):
+def derivar (password: str):
 
     password = bytes(password, encoding='utf-8')
 
@@ -21,7 +21,7 @@ def derivar (password):
     key= kdf.derive(password)
     return key, salt
 
-def verificar(key, salt, newpassword):
+def verificar(key, salt, newpassword: str):
     # verify
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
@@ -29,7 +29,7 @@ def verificar(key, salt, newpassword):
         salt=salt,
         iterations=480000,
     )
-
+    newpassword = bytes(newpassword, encoding='utf-8')
     try: out=kdf.verify(newpassword, key) 
     except: return False
     else: 
@@ -39,11 +39,12 @@ def verificar(key, salt, newpassword):
             return False
 
 # #contraseña buena
-# password = b"hola"
+# password = "hola"
+
 
 # #preguntar password
 # newpassword = input("Introduzca su contraseña: ")
-# newpassword = bytes(newpassword, encoding='utf-8')
+
 
 # key, salt = derivar(password)
-# verificar(key, salt, newpassword)
+# print(verificar(key, salt, newpassword))
