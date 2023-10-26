@@ -18,10 +18,12 @@ def register_user():
     Label(screen_registro, text="Éxito al registrarse", fg="green", font=("Calibri", 11)).pack()
 
 def login_user():
-
+    global entry_name_data
+    global entry_data
     user = actual_username.get()
     newpassword = actual_password.get()
 
+    name_data = StringVar()
     data = StringVar()
 
     if buscar(user, newpassword):
@@ -29,18 +31,25 @@ def login_user():
         screen_data = Toplevel(screen)
         screen_data.geometry("300x250")
         screen_data.title("Hola, "+str(user))
+
         Label(screen_data, text="").pack()
+        Label(screen_data, text="Nombre del archivo").pack()
+        entry_name_data = Entry(screen_data, textvariable=name_data)
+        entry_name_data.pack()
         Label(screen_data, text="Introduzca el archivo de audio").pack()
+        entry_data = Entry(screen_data, textvariable=data)
+        entry_data.pack()
         Label(screen_data, text="").pack()
-        Label(screen_data, text="").pack()
-        Entry(screen_data, textvariable=data).pack()
-        Label(screen_data, text="").pack()
-        Label(screen_data, text="").pack()
-        Button(screen_data, text="Enviar", width=10, height=1).pack()
+        Button(screen_data, text="Enviar", width=10, height=1, command=archivo).pack()
     else:
         Label(screen_login, text="Combinación incorrecta", fg="red", font=("Calibri", 11)).pack()
     
-    
+def archivo():
+    user = actual_username.get()
+    name_data = entry_name_data.get()
+    data = entry_data.get()
+
+    add(user, name_data, data)
 
 def register():
     global username

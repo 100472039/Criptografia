@@ -16,7 +16,7 @@ def crear_json():
 
     print("Archivo JSON creado correctamente.")
 
-def add(usuario, contraseña, salt, contraseña_sin_encriptar):
+def add(usuario, name_data, data):
     # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
     try:
         with open(path, "r") as archivo_json:
@@ -29,9 +29,8 @@ def add(usuario, contraseña, salt, contraseña_sin_encriptar):
     # Añadir nuevos datos al diccionario existente
     nuevos_datos = {
         "Username": usuario,
-        "Password": contraseña,
-        "Salt": salt,
-        "Unencrypted password": contraseña_sin_encriptar
+        "Name_data": name_data,
+        "Data": data
     }
 
     datos_existentes.append(nuevos_datos)
