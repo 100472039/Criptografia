@@ -42,3 +42,13 @@ def cifrado_simetrico(simetrica, mensaje):
     cifrado = cipher_suite.encrypt(mensaje)
     print(f'Mensaje cifrado simétricamente: {cifrado}')
     return cifrado
+
+def descifrado_simetrico(simetrica, cifrado):
+    cipher_suite = Fernet(simetrica)
+    try:
+        mensaje = cipher_suite.decrypt(cifrado)
+        print(f'Mensaje descifrado simétricamente: {mensaje}')
+        return mensaje
+    except Exception as e:
+        print(f'Error al descifrar el mensaje: {e}')
+        return None
