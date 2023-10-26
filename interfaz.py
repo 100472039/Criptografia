@@ -24,28 +24,39 @@ def register_user():
     Label(screen_registro, text="Éxito al registrarse", fg="green", font=("Calibri", 11)).pack()
 
 def login_user():
-    username_info = actual_username.get()
+    # username_info = actual_username.get()
+    # password_info = actual_password.get()
+    # data = StringVar()
+
+    # key, salt = kdf.derivar(password_info)
+
+    # with open("json/registro.json", 'r') as archivo:
+    #     file = json.load(archivo)
+
+    # for entry in file:
+    #     if entry["Username"] == username_info:
+    #         print(entry["salt"])
+    #         print(str(salt))
+    #     if entry["Username"] == username_info and entry["salt"] == str(salt):
+    #         # screen_archivo = Toplevel(screen)
+    #         # screen_archivo.title("Añadir archivo")
+    #         # screen_archivo.geometry("300x250")
+    #         screen_login.geometry("300x300")
+    #         Label(screen_login, text="")
+    #         Label(screen_login, text="Introduzca el archivo encriptado").pack()
+    #         Entry(screen_login, textvariable=data).pack()
+    #         Button(screen_login, text="Enviar", width=10, height=1).pack()
+
     password_info = actual_password.get()
-    data = StringVar()
-
     key, salt = kdf.derivar(password_info)
+    
+    if kdf.verificacion(salt):
+        screen_login.geometry("300x300")
+        Label(screen_login, text="")
+        Label(screen_login, text="Introduzca el archivo encriptado").pack()
+        Entry(screen_login, textvariable=data).pack()
+        Button(screen_login, text="Enviar", width=10, height=1).pack()
 
-    with open("json/registro.json", 'r') as archivo:
-        file = json.load(archivo)
-
-    for entry in file:
-        if entry["Username"] == username_info:
-            print(entry["salt"])
-            print(str(salt))
-        if entry["Username"] == username_info and entry["salt"] == str(salt):
-            # screen_archivo = Toplevel(screen)
-            # screen_archivo.title("Añadir archivo")
-            # screen_archivo.geometry("300x250")
-            screen_login.geometry("300x300")
-            Label(screen_login, text="")
-            Label(screen_login, text="Introduzca el archivo encriptado").pack()
-            Entry(screen_login, textvariable=data).pack()
-            Button(screen_login, text="Enviar", width=10, height=1).pack()
 
 def arhivo():
     ...

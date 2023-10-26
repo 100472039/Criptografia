@@ -1,3 +1,4 @@
+import json
 import os 
 #from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 #eso no lo necesitamos todavía
@@ -47,3 +48,11 @@ def verificar(key, salt, newpassword):
 
 # key, salt = derivar(password)
 # verificar(key, salt, newpassword)
+def verificacion(new_salt):
+    print(new_salt)
+    with open("json/registro.json", 'r') as archivo:
+        file = json.load(archivo)
+    for entry in file:
+        if entry["salt"] == new_salt:
+            return True
+    return False
