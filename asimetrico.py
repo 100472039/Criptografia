@@ -5,6 +5,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hmac
 from cryptography.hazmat.backends import default_backend
+from creador import *
 
 
 # Generar claves asimétricas
@@ -74,12 +75,25 @@ def descifrado_simetrico(simetrica, cifrado, tag):
 def session_keys(user):
     #se inicia sesión
     # Generar clave simétrica
+
     simetrica = Fernet.generate_key()
     sim_cifrada=cifrar_con_publica(publica_base, simetrica)
-
     #se mandaría simétrica a la base de datos
-    #base de datos descifra simétrica con su privada
-    descifrar_con_privada(sim_cifrada, privada_base)
+
+    guardado_simetrica(user, sim_cifrada)
+
+
+def encriptar_mensaje(user, mensaje, pu_user, simetrica):
+    mensaje_cifrado=cifrar_con_publica(pu_user, mensaje)
+    mensaje_cifrado, tag=cifrado_simetrico(simetrica, mensaje_cifrado)
+
+    #mandar mensaje
+
+    mensaje=descifrado_simetrico(simetrica, mensaje_cifrado, tag)
+    #guardar en base de datos
+
+
+
     
 
 

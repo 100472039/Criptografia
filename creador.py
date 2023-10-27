@@ -41,7 +41,7 @@ def add(usuario, name_data, data):
 
     print("Nuevos datos añadidos al archivo JSON correctamente.")
 
-def registrar(usuario, key, salt):
+def registrar(usuario, key, salt, pub):
     path = "json/registro.json"
     # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
     try:
@@ -54,7 +54,8 @@ def registrar(usuario, key, salt):
     nuevos_datos = {
         "Username": usuario,
         "key": key,
-        "salt": salt
+        "salt": salt,
+        "public": pub
     }
 
     datos_existentes.append(nuevos_datos)
@@ -64,6 +65,21 @@ def registrar(usuario, key, salt):
         json.dump(datos_existentes, archivo_json, indent=4)
 
     print("Nuevos datos añadidos al archivo JSON correctamente.")
+
+def guardado_simetrica(user, sim_cifrada):
+    path = "json/registro.json"
+    # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
+    try:
+        with open(path, "r") as archivo_json:
+            datos_existentes = json.load(archivo_json)
+    except FileNotFoundError:
+        print("No hay datos en el registro")
+
+    #guardar simétrica en registro
+    
+
+   
+
 
 def buscar(user, newpassword):
     path = "json/registro.json"

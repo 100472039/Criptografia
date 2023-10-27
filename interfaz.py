@@ -2,7 +2,16 @@ import json
 from tkinter import *
 from creador import *
 from kdf import *
-import kdf
+from asimetrico import *
+
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hmac
+from cryptography.hazmat.backends import default_backend
+
 
 def register_user():
     username_info = username.get()
@@ -10,7 +19,9 @@ def register_user():
     # simmetric_info = new_simmetric.get()
 
     key, salt = derivar(password_info)
-    registrar(username_info, key, salt)
+    privada_user = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    publica_user = privada_user.public_key()
+    registrar(username_info, key, salt, publica_user)
 
     new_username.delete(0, END)
     new_password.delete(0, END)
@@ -27,6 +38,8 @@ def login_user():
     data = StringVar()
 
     if buscar(user, newpassword):
+
+
         screen_login.destroy()
         screen_data = Toplevel(screen)
         screen_data.geometry("300x250")
@@ -41,6 +54,8 @@ def login_user():
         entry_data.pack()
         Label(screen_data, text="").pack()
         Button(screen_data, text="Enviar", width=10, height=1, command=archivo).pack()
+
+        session_keys(user)
     else:
         Label(screen_login, text="Combinación incorrecta", fg="red", font=("Calibri", 11)).pack()
     

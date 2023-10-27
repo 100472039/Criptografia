@@ -71,14 +71,3 @@ def log_in():
 
 
 
-
-
-if buscar(user, newpassword):
-    #se inicia sesión
-    # Generar clave simétrica
-    simetrica = Fernet.generate_key()
-    sim_cifrada=cifrar_con_publica(publica_base, simetrica)
-
-
-    #se mandaría simétrica a la base de datos
-
