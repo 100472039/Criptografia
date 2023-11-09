@@ -22,7 +22,7 @@ def register_user():
     key, salt = derivar(password_info)
     # privada_user = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     # publica_user = privada_user.public_key()
-    registrar(username_info, key, salt)
+    añadir_registro(username_info, key, salt)
 
     new_username.delete(0, END)
     new_password.delete(0, END)
@@ -30,12 +30,13 @@ def register_user():
     Label(screen_registro, text="Éxito al registrarse", fg="green", font=("Calibri", 11)).pack()
 
 def login_user():
-    global entry_name_data
+    global entry_data_name
     global entry_data
+    global screen_data
     user = actual_username.get()
     newpassword = actual_password.get()
 
-    name_data = StringVar()
+    data_name = StringVar()
     data = StringVar()
 
     if buscar(user, newpassword):
@@ -48,8 +49,8 @@ def login_user():
 
         Label(screen_data, text="").pack()
         Label(screen_data, text="Nombre del archivo").pack()
-        entry_name_data = Entry(screen_data, textvariable=name_data)
-        entry_name_data.pack()
+        entry_data_name = Entry(screen_data, textvariable=data_name)
+        entry_data_name.pack()
         Label(screen_data, text="Introduzca el archivo de audio").pack()
         entry_data = Entry(screen_data, textvariable=data)
         entry_data.pack()
@@ -62,10 +63,15 @@ def login_user():
     
 def archivo():
     user = actual_username.get()
-    name_data = entry_name_data.get()
+    data_name = entry_data_name.get()
     data = entry_data.get()
 
-    add(user, name_data, data)
+    añadir_datos(user, data_name, data)
+
+    entry_data_name.delete(0, END)
+    entry_data.delete(0, END)
+
+    Label(screen_data, text="Datos guardados", fg="green", font=("Calibri", 11)).pack()
 
 def register():
     global username

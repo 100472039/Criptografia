@@ -1,57 +1,7 @@
 [
     {
-        "Username": "gg",
-        "key": "d9748ee26be2adbc0ac9fb77ab0c2d036e3e4d060baddd60fb83a35e262c743c",
-        "salt": "d07b52821bfff3f8f2fb47c62085878e"
-    },
-    {
-        "Username": "hola",
-        "key": "697126d999dbd62e84f954b2d26d07e37424dcfb2b3c45bcdedc8b305d051f23",
-        "salt": "2dc9fe426c0d184aae600f1919c6ba96"
-    },
-    {
-        "Username": "ague",
-        "key": "d902b5f9e0b3637fb8dc4535a58ec31f1ea8af28cb9b1e8a49d1ba7c5c7d782b",
-        "salt": "f6ea4a60a7c8c163a1809ebc4fd118b0"
-    },
-    {
-        "Username": "albertito",
-        "key": "28cc8053c26362a59aeac24c852e1700a5452225edb2ef69b6dfd8fa5dcf1da2",
-        "salt": "078997cafe43bd3bf347908182b56d04"
-    },
-    {
-        "Username": "ague",
-        "key": "8fd1a0bca5257627f4794280538eb0ea3eb933a2881b209f94d594fdf53a2837",
-        "salt": "b7be9263f5cf79efe77bd931efca3970"
-    },
-    {
-        "Username": "holahola",
-        "key": "4d50905c430e85d2d161549d91b07caf2f741808f812d57b545e434aa9578380",
-        "salt": "e5ff586e9b9d5bcba2acca32ba247856"
-    },
-    {
-        "Username": "Alberto",
-        "key": "ccbaccade7523637878489be151887553829bec95ba6470fd389acfbfe6f3173",
-        "salt": "33fc853ae665dcb98b077c3f24fee678"
-    },
-    {
-        "Username": "buen",
-        "key": "3e9a9bf7fbbbd17a0f6f3dff26c5095bfa3be9e52c09becb698e343a58d2bc4a",
-        "salt": "567563e45a752fa2d7e162f6cd6232d6"
-    },
-    {
-        "Username": "hola",
-        "key": "8e7671acc3e0eb59a48a28afbcfdd46f9f6925f037881fdc12889be90e5a8844",
-        "salt": "4e50ae93fdba5df0a8f7dd2f493b7da1"
-    },
-    {
-        "Username": "agueda",
-        "key": "4f931e38b5dd33244e1defab4c4ee7cee6ebd7184723881232279f89bf6cda67",
-        "salt": "e427fe6acd744adc48c0e10382b6e74d"
-    },
-    {
-        "Username": "luis",
-        "key": "3b970bff5a4b6d43d853305c0d1fec173b6c4c708d05071b7525400b70b29f19",
-        "salt": "af3c06c2ab7085db2d70317109e332be"
+        "Username": "alberto",
+        "key": "c267626e8aa6e290af24fdc67fff659c616cb7a4ad4e75f25b9fc39b3677b123",
+        "salt": "1946ce138fc130481626858a6902fe69"
     }
 ]
