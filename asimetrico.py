@@ -13,9 +13,6 @@ privada_base = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 publica_base = privada_base.public_key()
 
 
-# Generar clave simétrica
-simetrica = Fernet.generate_key()
-
 # Mandar asimétricamente la clave simétrica
 def cifrar_con_publica(publica, mensaje):
     cifrado = publica.encrypt(
@@ -69,7 +66,7 @@ def descifrado_simetrico(simetrica, cifrado, tag):
         return mensaje
 
     except Exception:
-        print(f'Error al descifrar el mensaje o verificar la autenticidad: {Exception}')
+        print('Error al descifrar el mensaje o verificar la autenticidad')
         return None
 
 def session_keys(user):
@@ -90,18 +87,9 @@ def encriptar_mensaje(user, mensaje, pu_user, simetrica):
     #mandar mensaje
 
     mensaje=descifrado_simetrico(simetrica, mensaje_cifrado, tag)
-    #guardar en base de datos
+    #guardar en base
+    guardar_mensaje(user, mensaje)
 
 
-
-    
-
-
-
-# Ejemplo de uso
-mensaje_original = b"Este es un mensaje secreto"
-clave_asimetrica = cifrar_con_publica(publica, simetrica)
-cifrado, tag = cifrado_simetrico(simetrica, mensaje_original)
-descifrado_simetrico(simetrica, cifrado, tag)
 
     

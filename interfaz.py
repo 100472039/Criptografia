@@ -18,10 +18,11 @@ def register_user():
     password_info = password.get()
     # simmetric_info = new_simmetric.get()
 
+
     key, salt = derivar(password_info)
-    privada_user = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    publica_user = privada_user.public_key()
-    registrar(username_info, key, salt, publica_user)
+    # privada_user = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    # publica_user = privada_user.public_key()
+    registrar(username_info, key, salt)
 
     new_username.delete(0, END)
     new_password.delete(0, END)
