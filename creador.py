@@ -75,5 +75,19 @@ def buscar(user, newpassword):
     else:
         return False
     
+def buscar_asimetrico(user):
+    path = "json/asimetrico.json"
+    # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
+    try:
+        with open(path, "r") as archivo_json:
+            datos_existentes = json.load(archivo_json)
+    except FileNotFoundError:
+        print("No hay datos en el registro")
+
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"]==user:
+            print("User es ", user)
+            return datos_existentes[i]["User_publica"]
+    
 def guardar_mensaje(user, mensaje):
     print("se ha guardado el mensaje correctamente")

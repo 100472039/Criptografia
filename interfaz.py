@@ -20,9 +20,9 @@ def register_user():
 
 
     key, salt = derivar(password_info)
-    # privada_user = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    # publica_user = privada_user.public_key()
+    user_privada, user_publica = generar_asimetrico()
     añadir_registro(username_info, key, salt)
+    añadir_asimetrico(username_info, user_privada, user_publica)
 
     new_username.delete(0, END)
     new_password.delete(0, END)
@@ -57,7 +57,7 @@ def login_user():
         Label(screen_data, text="").pack()
         Button(screen_data, text="Enviar", width=10, height=1, command=archivo).pack()
 
-        session_keys(user)
+        #session_key = session_keys_generator(user)
     else:
         Label(screen_login, text="Combinación incorrecta", fg="red", font=("Calibri", 11)).pack()
     
@@ -66,7 +66,8 @@ def archivo():
     data_name = entry_data_name.get()
     data = entry_data.get()
 
-    añadir_datos(user, data_name, data)
+    data_encypt = cifrar_con_publica(user, data)
+    añadir_datos(user, data_name, data_encypt)
 
     entry_data_name.delete(0, END)
     entry_data.delete(0, END)
