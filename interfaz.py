@@ -75,10 +75,13 @@ def añadir_archivo():
     data_name = entry_data_name.get()
     data = entry_data.get()
 
-    # El mensaje es encriptado con la pública del usuario y la session key. Data_encrypt es una tupla que contiene el cifrado y el tag
-    data_encrypt = encriptar_mensaje(user, data)
+    # El mensaje es encriptado con la pública del usuario y la session key. Data_encrypt es una tupla que contiene el cifrado, el tag y la firma
+    data_encrypt, firma = encriptar_mensaje(user, data)
     # Los datos se desencriptan con la session key antes de guardarlos
-    data_publica = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
+
+    print("data_encrypt:\n"+str(data_encrypt[0])+"\n"+str(data_encrypt[1])+"\n"+str(firma))
+    #se manda
+    data_publica = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1], firma)
     añadir_datos(user, data_name, data_publica.hex())
 
 

@@ -1,3 +1,4 @@
+import sys
 import json
 from kdf import *
 
@@ -153,7 +154,7 @@ def buscar_simetrica(user):
     datos_existentes = abrir_archivo(path)
     if datos_existentes == []:
         print("No hay datos en el registro")
-        raise("No hay datos en el registro")
+        sys.exit(1)
     
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
@@ -164,7 +165,7 @@ def buscar_session_key(user):
     datos_existentes = abrir_archivo(path)
     if datos_existentes == []:
         print("No hay datos en el registro")
-        raise("No hay datos en el registro")
+        sys.exit(1)
     
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
