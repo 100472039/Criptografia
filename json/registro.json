@@ -1,52 +1,12 @@
 [
     {
-        "Username": "alberto",
-        "key": "1be824725e0ebef8d000864c922add68029b124bdadf7bca717321a24fccc4e5",
-        "salt": "cc63bd59f8f0ed97d952ab4e6ecef3da"
-    },
-    {
-        "Username": "martin",
-        "key": "e185062c1913f72764401709c1cf4a44528e54b1e13b61e0095dd8dc26c6147f",
-        "salt": "3ed00187a927dba830480baec58ee2b7"
-    },
-    {
-        "Username": "ballena",
-        "key": "54a50f4fdc95e2c78f672cb827ca76b0ca08ad527ba1d69637aa71ce208d4147",
-        "salt": "7faef41c56a0df64fe26064a7239569e"
-    },
-    {
-        "Username": "polo",
-        "key": "3f46abf7530e121c725f0e30aef2823db8003724a085a0d21c9d66382403c3aa",
-        "salt": "4f893a06d4d58bb6e2cb630ae915754b"
-    },
-    {
-        "Username": "marco",
-        "key": "76e864eec4b6bd45c4bd5989de31c791a03e54d9dccbe0fd0a7252feeb1b6af3",
-        "salt": "43b3adf4c53e31de25ab4963dfde799b"
-    },
-    {
-        "Username": "s",
-        "key": "f4fea3437455f7087434a02d38f96353709f6415b5e16e4f1448f6adb8b71fa1",
-        "salt": "7dd7668c34f34447d1bbae9073de6d0b"
-    },
-    {
-        "Username": "n",
-        "key": "072d6b552e15a39d780559ead2e5b240baa2bed9e8e437422da184c693d8da0f",
-        "salt": "d7c7739e36f0fc35c6b34b93b6e0ab2b"
-    },
-    {
-        "Username": "p",
-        "key": "b678b983e393df12af917e12c25213b72750ab6fdeeacbda1eaa3b8785ff3428",
-        "salt": "fbbadbae81b515930fd985efe4bebd14"
-    },
-    {
-        "Username": "nio",
-        "key": "15d734fa1eda7a19a57e2b2052bd6bf02e4c883b57a89192a8c267271aa7cb94",
-        "salt": "d05468c19dff2ddef362b064d090ccf3"
-    },
-    {
         "Username": "nico",
-        "key": "6176cea2bfc277abb31b47586a4911ff06109efe8a8566acf86bcef503b8abc6",
-        "salt": "176f382054aeac180e2006845f65e025"
+        "key": "b099c8c2a5deaf74d420cd030951cafcba216c7ea8f7a444cba21b587f752c66",
+        "salt": "0ace423015e2497a86bb93c80ff0fb73"
+    },
+    {
+        "Username": "paco",
+        "key": "7b86a5031f06bfb080e973d523d5521417923d75db8b80fad1566153467a6e5d",
+        "salt": "0df791d1f4831844f9b141bfab299001"
     }
 ]

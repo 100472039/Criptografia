@@ -41,7 +41,16 @@ def login_user():
 
     if buscar(user, newpassword):
 
-
+        session_key = session_keys_generator(user)
+        # print("session_key:\n"+str(session_key))
+        session_key_cifrada = cifrar_con_publica(user, session_key)
+        # print("session_key_cifrada:\n"+str(session_key_cifrada))
+        session_key_descifrada = descifrar_con_privada(user, session_key_cifrada)
+        # print("session_key_descifrada:\n"+str(session_key_descifrada))
+        añadir_user_simetrico(user, str(session_key_cifrada), session_key_descifrada.decode())
+        #simetrico = descifrar_con_privada(user, session_key)
+        #añadir_simetrico(user, session_key, simetrico)
+        
         screen_login.destroy()
         screen_data = Toplevel(screen)
         screen_data.geometry("300x250")
@@ -55,24 +64,33 @@ def login_user():
         entry_data = Entry(screen_data, textvariable=data)
         entry_data.pack()
         Label(screen_data, text="").pack()
-        Button(screen_data, text="Enviar", width=10, height=1, command=archivo).pack()
+        Button(screen_data, text="Enviar", width=10, height=1, command=añadir_archivo).pack()
+        Button(screen_data, text="Cerrar sesión", width=10, height=1, command=cerrar_sesion).pack()
 
-        #session_key = session_keys_generator(user)
     else:
         Label(screen_login, text="Combinación incorrecta", fg="red", font=("Calibri", 11)).pack()
     
-def archivo():
+def añadir_archivo():
     user = actual_username.get()
     data_name = entry_data_name.get()
     data = entry_data.get()
 
-    data_encypt = cifrar_con_publica(user, data)
-    añadir_datos(user, data_name, data_encypt)
+    # El mensaje es encriptado con la pública del usuario y la session key. Data_encrypt es una tupla que contiene el cifrado y el tag
+    data_encrypt = encriptar_mensaje(user, data)
+    # Los datos se desencriptan con la session key antes de guardarlos
+    data_publica = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
+    añadir_datos(user, data_name, data_publica.hex())
+
 
     entry_data_name.delete(0, END)
     entry_data.delete(0, END)
 
     Label(screen_data, text="Datos guardados", fg="green", font=("Calibri", 11)).pack()
+
+def cerrar_sesion():
+    user = actual_username.get()
+    remove_session_key(user)
+    screen_data.destroy()
 
 def register():
     global username

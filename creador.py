@@ -3,17 +3,21 @@ from kdf import *
 
 path = "json/datos.json"
 
+def abrir_archivo(path):
+    try:
+        with open(path, "r") as archivo_json:
+            datos_existentes = json.load(archivo_json)
+    except FileNotFoundError:
+        datos_existentes = []
+    return datos_existentes
+
 def add(path, entradas, valores):
     #comprobar que los valores de entrada son valores
     if len(entradas) != len(valores):
         print("Valores de entrada inválidos")
         return -1
     # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
-    try:
-        with open(path, "r") as archivo_json:
-            datos_existentes = json.load(archivo_json)
-    except FileNotFoundError:
-        datos_existentes = []
+    datos_existentes = abrir_archivo(path)
     
     # Añadir nuevos datos al diccionario existente
     nuevos_datos = {
@@ -29,7 +33,33 @@ def add(path, entradas, valores):
         json.dump(datos_existentes, archivo_json, indent=4)
 
     print("Nuevos datos añadidos al archivo JSON correctamente.")
- 
+
+def remove(path, user):
+    datos_existentes = abrir_archivo(path)
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"] == user:
+            #Eliminar diccionario de la lista
+            del datos_existentes[i]
+            #print(datos_existentes[i]["Simetrica"])
+            print("Datos eliminados del archivo JSON correctamente")
+            # Escribir el diccionario actualizado de vuelta al archivo JSON
+            with open(path, "w") as archivo_json:
+                json.dump(datos_existentes, archivo_json, indent=4)
+            return True
+    return False
+
+def comprobar_duplicados(path, user):
+    datos_existentes = abrir_archivo(path)
+    eliminados = []
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"] == user:
+            eliminados.insert(0, i)
+    for i in eliminados:
+        del datos_existentes[i]
+    # Escribir el diccionario actualizado de vuelta al archivo JSON
+    with open(path, "w") as archivo_json:
+        json.dump(datos_existentes, archivo_json, indent=4)
+
 def añadir_registro(usuario, key, salt):
     path = "json/registro.json"
     add(path, ["Username", "key", "salt"], [usuario, key, salt])
@@ -42,20 +72,39 @@ def añadir_asimetrico(username, user_privada, user_publica):
     path = "json/asimetrico.json"
     add(path, ["Username", "User_privada", "User_publica"], [username, user_privada, user_publica])
 
+def añadir_user_simetrico(username, simetrica_cifrada, simetrica):
+    path = "json/user_simetrico.json"
+    comprobar_duplicados(path, username)
+    add(path, ["Username", "Simetrica_cifrada", "Simetrica"], [username, simetrica_cifrada, simetrica])
+
+def añadir_simetrico(username, simetrica):
+    path = "json/session_keys.json"
+    comprobar_duplicados(path, username)
+    add(path, ["Username", "Simetrica"], [username, simetrica])
+
+def remove_session_key(user):
+    path = "json/session_keys.json"
+    existente = True
+    while existente:
+        existente = remove(path, user)
+    path = "json/user_simetrico.json"
+    existente = True
+    while existente:
+        existente = remove(path, user)
+
 
 def buscar(user, newpassword):
     path = "json/registro.json"
     # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
-    try:
-        with open(path, "r") as archivo_json:
-            datos_existentes = json.load(archivo_json)
-    except FileNotFoundError:
+    datos_existentes = abrir_archivo(path)
+
+    if datos_existentes == []:
         print("No hay datos en el registro")
+        return False
     
 
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
-            print("User es ", user)
             key=bytes.fromhex(datos_existentes[i]["key"])
             salt=bytes.fromhex(datos_existentes[i]["salt"])
 
@@ -75,19 +124,51 @@ def buscar(user, newpassword):
     else:
         return False
     
-def buscar_asimetrico(user):
+def buscar_publica(user):
     path = "json/asimetrico.json"
     # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
-    try:
-        with open(path, "r") as archivo_json:
-            datos_existentes = json.load(archivo_json)
-    except FileNotFoundError:
+    datos_existentes = abrir_archivo(path)
+
+    if datos_existentes == []:
         print("No hay datos en el registro")
+        return False
 
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
-            print("User es ", user)
             return datos_existentes[i]["User_publica"]
+
+def buscar_privada(user):
+    path = "json/asimetrico.json"
+    datos_existentes = abrir_archivo(path)
+    if datos_existentes == []:
+        print("No hay datos en el registro")
+        return False
     
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"]==user:
+            return datos_existentes[i]["User_privada"]
+    
+def buscar_simetrica(user):
+    path = "json/user_simetrico.json"
+    datos_existentes = abrir_archivo(path)
+    if datos_existentes == []:
+        print("No hay datos en el registro")
+        raise("No hay datos en el registro")
+    
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"]==user:
+            return datos_existentes[i]["Simetrica"]
+
+def buscar_session_key(user):
+    path = "json/session_keys.json"
+    datos_existentes = abrir_archivo(path)
+    if datos_existentes == []:
+        print("No hay datos en el registro")
+        raise("No hay datos en el registro")
+    
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"]==user:
+            return datos_existentes[i]["Simetrica"]
+
 def guardar_mensaje(user, mensaje):
     print("se ha guardado el mensaje correctamente")

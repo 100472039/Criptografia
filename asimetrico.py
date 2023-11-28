@@ -8,6 +8,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hmac
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
 from creador import *
 
 
@@ -22,7 +23,7 @@ def generar_asimetrico():
     #user_publica_hex = user_publica_pem.hex()
     user_privada_str = user_privada_pem.decode('utf-8')
     user_publica_str = user_publica_pem.decode('utf-8')
-    print(type(user_publica_pem))
+    # print(type(user_publica_pem))
     return user_privada_str, user_publica_str
 
 def rsa_pem_private(clave):
@@ -41,18 +42,9 @@ def rsa_pem_public(clave):
 
 # Mandar asimétricamente la clave simétrica
 def cifrar_con_publica(user, mensaje):
-    publica = buscar_asimetrico(user)
-    #user_publica_bin = bytes.fromhex(publica)
-    #user_publica_pem = rsa_pem_public(rsa.PublicKey.load_pkcs1(user_publica_bin))
-    #publica_bin = bytes.fromhex(publica)
-    #publica_rsa = publica_bin.decode("utf-8")
-    print(publica)
-    #print("binario_nuevo:\n"+str(publica_bin))
-    #print("publica_total:\n"+str(publica_rsa))
+    publica = buscar_publica(user)
     publica_bytes = publica.encode('utf-8')
     publica_rsa = serialization.load_pem_public_key(publica_bytes, backend=default_backend())
-    print(publica_bytes)
-    #publica_pem = serialization.load_pem_public_key(publica_bytes, backend=default_backend())
     cifrado = publica_rsa.encrypt(
         mensaje.encode(),
         padding.OAEP(
@@ -61,12 +53,18 @@ def cifrar_con_publica(user, mensaje):
             label=None
         )
     )
-    
-    return cifrado.hex()
+    # print("cifrado:\n"+str(cifrado))
+    # print("cifrado_hex:\n"+str(cifrado.hex()))
+    # Devuelve mensaje con encrypt
+    return cifrado
 
 
-def descifrar_con_privada(cifrado, privada):
-    mensaje = privada.decrypt(
+def descifrar_con_privada(user, cifrado):
+    privada = buscar_privada(user)
+    privada_bytes = privada.encode('utf-8')
+    privada_rsa = serialization.load_pem_private_key(privada_bytes, password=None, backend=default_backend())
+    # print("Privada_rsa:\n"+str(privada_rsa))
+    mensaje = privada_rsa.decrypt(
         cifrado,
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
@@ -82,17 +80,24 @@ def cifrado_simetrico(simetrica, mensaje):
     f = Fernet(simetrica)
     cifrado = f.encrypt(mensaje)
 
+    # print("f:\n"+str(f))
+    # print("cifrado:\n"+str(cifrado))
+    # print("simetrica:\n"+str(simetrica))
+
     h = hmac.HMAC(simetrica, hashes.SHA256(), backend=default_backend())
     h.update(cifrado)
     tag = h.finalize()
 
-    print(f'Mensaje cifrado simétricamente: {cifrado}')
-    print(f'Etiqueta de autenticación: {tag}')
+    # print(f'Mensaje cifrado simétricamente: {cifrado}')
+    # print(f'Etiqueta de autenticación: {tag}')
     return cifrado, tag
 
 
 # Descifrar simétricamente los datos y verificar la etiqueta de autenticación
-def descifrado_simetrico(simetrica, cifrado, tag):
+def descifrado_simetrico(user, cifrado, tag):
+
+    simetrica = buscar_session_key(user)
+    simetrica = simetrica.encode()
 
     try:
         h = hmac.HMAC(simetrica, hashes.SHA256(), backend=default_backend())
@@ -101,7 +106,7 @@ def descifrado_simetrico(simetrica, cifrado, tag):
 
         f = Fernet(simetrica)
         mensaje = f.decrypt(cifrado)
-        print(f'Mensaje descifrado simétricamente: {mensaje}')
+        print(f'Mensaje descifrado simétricamente:\n {mensaje}')
         return mensaje
 
     except Exception:
@@ -110,11 +115,14 @@ def descifrado_simetrico(simetrica, cifrado, tag):
 
 def session_keys_generator(user):
 
-    simetrica = Fernet.generate_key()
-    
+    session_key = Fernet.generate_key()
+    print("session_key:\n"+str(session_key))
+    #simetrica_cifrada = cifrar_con_publica(user, simetrica)
+    session_key_decode = session_key.decode()
+    # print("session_key_decode:\n"+str(session_key_decode))
+    añadir_simetrico(user, session_key_decode)
 
-
-    return session_key
+    return session_key_decode
     
     # #se inicia sesión
     # # Generar clave simétrica
@@ -126,16 +134,22 @@ def session_keys_generator(user):
     # guardado_simetrica(user, sim_cifrada)
 
 
-def encriptar_mensaje(user, mensaje, pu_user, simetrica):
-    mensaje_cifrado=cifrar_con_publica(pu_user, mensaje)
-    mensaje_cifrado, tag=cifrado_simetrico(simetrica, mensaje_cifrado)
+def encriptar_mensaje(user, mensaje):
+    simetrica = buscar_simetrica(user)
+    simetrica_encode = simetrica.encode()
+    mensaje_publica = cifrar_con_publica(user, mensaje)
+    #mensaje_cifrado, tag=cifrado_simetrico(simetrica, mensaje_cifrado)
+    mensaje_publica_simetrica = cifrado_simetrico(simetrica_encode, mensaje_publica)
 
-    #mandar mensaje
-
-    mensaje=descifrado_simetrico(simetrica, mensaje_cifrado, tag)
-    #guardar en base
-    guardar_mensaje(user, mensaje)
-
+    return mensaje_publica_simetrica
 
 
-    
+    # #mandar mensaje
+
+    # mensaje=descifrado_simetrico(simetrica, mensaje_cifrado, tag)
+    # #guardar en base
+    # guardar_mensaje(user, mensaje)
+
+
+def generar_hash(user, data_name):
+    clave = hashes.Hash(hashes.SHA256(), backend=default_backend())

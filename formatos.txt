@@ -1,0 +1,23 @@
+asimetrico.json:
+- Username: str
+- User_privada: pem.decode()
+- User_publica: pem.decode()
+
+datos.json:
+- Username: str
+- Data_name: str
+- Data: hex
+
+registro.json:
+- Username: str
+- Key: hex
+- salt: hex
+
+session_keys.json:
+- Username: str
+- Simetrica: pem.decode()
+
+user_simetrico.json:
+- Username: str
+- Simetrica_cifrada: str(encode)
+- Simetrica: pem.decode()
