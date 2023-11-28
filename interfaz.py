@@ -53,9 +53,10 @@ def login_user():
         
         screen_login.destroy()
         screen_data = Toplevel(screen)
-        screen_data.geometry("300x250")
+        screen_data.geometry("300x300")
         screen_data.title("Hola, "+str(user))
 
+        Label(screen_data, text="Añadir un archivo nuevo").pack()
         Label(screen_data, text="").pack()
         Label(screen_data, text="Nombre del archivo").pack()
         entry_data_name = Entry(screen_data, textvariable=data_name)
@@ -64,8 +65,9 @@ def login_user():
         entry_data = Entry(screen_data, textvariable=data)
         entry_data.pack()
         Label(screen_data, text="").pack()
-        Button(screen_data, text="Enviar", width=10, height=1, command=añadir_archivo).pack()
-        Button(screen_data, text="Cerrar sesión", width=10, height=1, command=cerrar_sesion).pack()
+        Button(screen_data, text="Enviar", width=14, height=1, command=añadir_archivo).pack()
+        Button(screen_data, text="Recuperar archivo", width=14, height=1, command=ventana_recuperar).pack()
+        Button(screen_data, text="Cerrar sesión", width=14, height=1, command=cerrar_sesion).pack()
 
     else:
         Label(screen_login, text="Combinación incorrecta", fg="red", font=("Calibri", 11)).pack()
@@ -90,10 +92,53 @@ def añadir_archivo():
 
     Label(screen_data, text="Datos guardados", fg="green", font=("Calibri", 11)).pack()
 
+def ventana_recuperar():
+    user = actual_username.get()
+    global return_data
+    data_name = StringVar()
+
+    screen_data.destroy()
+    screen_data_recover = Toplevel(screen)
+    screen_data_recover.geometry("300x250")
+    screen_data_recover.title("Hola, "+str(user))
+
+    Label(screen_data_recover, text="Recuperar un archivo").pack()
+    Label(screen_data_recover, text="").pack()
+    Label(screen_data_recover, text="Nombre del archivo").pack()
+    return_data = Entry(screen_data_recover, textvariable=data_name)
+    return_data.pack()
+    Label(screen_data_recover, text="").pack()
+    Button(screen_data_recover, text="Enviar", width=10, height=1, command=recuperar_archivo).pack()
+
 def cerrar_sesion():
     user = actual_username.get()
     remove_session_key(user)
     screen_data.destroy()
+
+def recuperar_archivo():
+    user = actual_username.get()
+    data_name = return_data.get()
+    print("data_name:\n"+str(data_name))
+    data_publica_hex = buscar_dato(user, data_name)
+    data_publica = bytes.fromhex(data_publica_hex)
+    print("data:\n"+str(data_publica))
+    simetrica = buscar_session_key(user)
+    print("simetrica:\n"+str(simetrica))
+    simetrica_encode = simetrica.encode()
+    print("simetrica_encode:\n"+str(simetrica_encode))
+    #El mensaje se encripta antes de ser enviado
+    data_encrypt = cifrado_simetrico(simetrica_encode, data_publica)
+    privada = buscar_privada(user) #Cambiar a ordenador
+    firma = firmar(privada, data_encrypt[1])
+    print("data_encrypt:\n"+str(data_encrypt[0]))
+    #Una vez llega, el mensaje es desencriptado con la simetrica y la privada
+    data_devuelta = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1], firma)
+    print("data_devuelta:\n"+str(data_devuelta))
+    data_encode = descifrar_con_privada(user, data_devuelta)
+    print("data_encode:\n"+str(data_encode))
+    data_final = data_encode.decode()
+    print("data_final:\n"+str(data_final))
+
 
 def register():
     global username
@@ -138,6 +183,7 @@ def login():
     Label(screen_login, text="Contraseña *").pack()
     password_entry = Entry(screen_login, textvariable=actual_password)
     password_entry.pack()
+    Label(screen_login, text="").pack()
     Button(screen_login, text="Entrar", width=10, height=1, command=login_user).pack()
 
 

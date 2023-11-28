@@ -171,5 +171,15 @@ def buscar_session_key(user):
         if datos_existentes[i]["Username"]==user:
             return datos_existentes[i]["Simetrica"]
 
+def buscar_dato(user, data_name):
+    path = "json/datos.json"
+    datos_existentes = abrir_archivo(path)
+    if datos_existentes == []:
+        print("No hay datos en el registro")
+    
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"] == user and datos_existentes[i]["Data_name"] == data_name:
+            return datos_existentes[i]["Data"]
+
 def guardar_mensaje(user, mensaje):
     print("se ha guardado el mensaje correctamente")

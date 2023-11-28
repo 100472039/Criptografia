@@ -86,7 +86,6 @@ def cifrado_simetrico(simetrica, mensaje):
 def descifrado_simetrico(user, cifrado, tag, firma):
 
     simetrica = buscar_session_key(user)
-    print("hola")
     simetrica = simetrica.encode()
 
     
@@ -99,7 +98,7 @@ def descifrado_simetrico(user, cifrado, tag, firma):
 
         f = Fernet(simetrica)
         mensaje = f.decrypt(cifrado)
-        print(f'Mensaje descifrado simétricamente:\n {mensaje}')
+        print(f'Mensaje descifrado simétricamente:\n{mensaje}')
         return mensaje
 
     except Exception:
@@ -121,6 +120,8 @@ def encriptar_mensaje(user, mensaje):
     simetrica_encode = simetrica.encode()
     mensaje_publica = cifrar_con_publica(user, mensaje)
     #mensaje_cifrado, tag=cifrado_simetrico(simetrica, mensaje_cifrado)
+    print("simetrica_encode:\n"+str(simetrica_encode))
+    print("mensaje_publica:\n"+str(mensaje_publica))
     mensaje_publica_simetrica = cifrado_simetrico(simetrica_encode, mensaje_publica)
     privada = buscar_privada(user)
     firma = firmar(privada, mensaje_publica_simetrica[1])
