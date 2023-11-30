@@ -21,8 +21,9 @@ def register_user():
 
     key, salt = derivar(password_info)
     user_privada, user_publica = generar_asimetrico()
+    user_simetrica = generar_simetrico()
     añadir_registro(username_info, key, salt)
-    añadir_asimetrico(username_info, user_privada, user_publica)
+    añadir_claves_usuario(username_info, user_privada, user_publica, user_simetrica)
 
     new_username.delete(0, END)
     new_password.delete(0, END)
@@ -47,7 +48,7 @@ def login_user():
         # print("session_key_cifrada:\n"+str(session_key_cifrada))
         session_key_descifrada = descifrar_con_privada(user, session_key_cifrada)
         # print("session_key_descifrada:\n"+str(session_key_descifrada))
-        añadir_user_simetrico(user, str(session_key_cifrada), session_key_descifrada.decode())
+        añadir_user_session_keys(user, str(session_key_cifrada), session_key_descifrada.decode())
         #simetrico = descifrar_con_privada(user, session_key)
         #añadir_simetrico(user, session_key, simetrico)
         
@@ -62,10 +63,10 @@ def login_user():
         entry_data_name = Entry(screen_data, textvariable=data_name)
         entry_data_name.pack()
         Label(screen_data, text="Introduzca el archivo de audio").pack()
-        # entry_data = Entry(screen_data, textvariable=data)
-        # entry_data.pack()
-        entry_data = Button(screen_data, text="Browse Folder", font =("Roboto", 14),command=browse)
+        entry_data = Entry(screen_data, textvariable=data)
         entry_data.pack()
+        # entry_data = Button(screen_data, text="Browse Folder", font =("Roboto", 14),command=browse)
+        # entry_data.pack()
         Label(screen_data, text="").pack()
         Button(screen_data, text="Enviar", width=14, height=1, command=añadir_archivo).pack()
         Button(screen_data, text="Recuperar archivo", width=14, height=1, command=ventana_recuperar).pack()
@@ -77,7 +78,8 @@ def login_user():
 def añadir_archivo():
     user = actual_username.get()
     data_name = entry_data_name.get()
-    data = original_audio
+    data = entry_data.get()
+    # data = original_audio
     print(data)
 
     # El mensaje es encriptado con la pública del usuario y la session key. Data_encrypt es una tupla que contiene el cifrado, el tag y la firma
@@ -86,9 +88,9 @@ def añadir_archivo():
 
     # print("data_encrypt:\n"+str(data_encrypt[0])+"\n"+str(data_encrypt[1])+"\n"+str(firma))
     #se manda
-    data_publica = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
-    comprobar_firma(user, firma, data_publica)
-    añadir_datos(user, data_name, data_publica.hex())
+    data_simetrica = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
+    comprobar_firma(user, firma, data_simetrica)
+    añadir_datos(user, data_name, data_simetrica.hex())
 
 
     entry_data_name.delete(0, END)
@@ -136,17 +138,17 @@ def recuperar_archivo():
     user = actual_username.get()
     data_name = return_data.get()
     # print("data_name:\n"+str(data_name))
-    data_publica_hex = buscar_dato(user, data_name)
-    data_publica = bytes.fromhex(data_publica_hex)
+    data_simetrica_hex = buscar_dato(user, data_name)
+    data_simetrica = bytes.fromhex(data_simetrica_hex)
     # print("data:\n"+str(data_publica))
-    simetrica = buscar_session_key(user)
+    session_key = buscar_session_key(user)
     # print("simetrica:\n"+str(simetrica))
-    simetrica_encode = simetrica.encode()
+    session_key_encode = session_key.encode()
     # print("simetrica_encode:\n"+str(simetrica_encode))
     #El mensaje se firma con la publica que tenía
-    firma = firmar("programa", data_publica)
+    firma = firmar("programa", data_simetrica)
     #El mensaje se encripta antes de ser enviado
-    data_encrypt = cifrado_simetrico(simetrica_encode, data_publica)
+    data_encrypt = cifrado_simetrico(session_key_encode, data_simetrica)
     # print("data_encrypt:\n"+str(data_encrypt[0]))
     #Una vez llega, el mensaje es desencriptado con la simetrica y la privada
     data_devuelta = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
@@ -207,7 +209,7 @@ def login():
 
 def main_screen():
     programa_privada, programa_publica = generar_asimetrico()
-    añadir_asimetrico("programa", programa_privada, programa_publica)
+    añadir_claves_programa("programa", programa_privada, programa_publica)
 
     global screen
     screen = Tk()

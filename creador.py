@@ -69,20 +69,24 @@ def añadir_datos(username, data_name, data):
     path = "json/programa/datos.json"
     add(path, ["Username", "Data_name", "Data"], [username, data_name, data])
 
-def añadir_asimetrico(username, user_privada, user_publica):
-    path = "json/usuario/asimetrico.json"
-    if username == "programa":
-        path = "json/programa/asimetrico.json"
+def añadir_claves_programa(username, user_privada, user_publica):
+    path = "json/programa/asimetrico.json"
     # Comprobar que no hay valores repetidos
     comprobar_duplicados(path, username)
     add(path, ["Username", "User_privada", "User_publica"], [username, user_privada, user_publica])
 
-def añadir_user_simetrico(username, simetrica_cifrada, simetrica):
-    path = "json/usuario/user_simetrico.json"
+def añadir_claves_usuario(username, user_privada, user_publica, user_simetrica):
+    path = "json/usuario/asimetrico.json"
+    # Comprobar que no hay valores repetidos
+    comprobar_duplicados(path, username)
+    add(path, ["Username", "User_privada", "User_publica", "User_simetrica"], [username, user_privada, user_publica, user_simetrica])
+
+def añadir_user_session_keys(username, simetrica_cifrada, simetrica):
+    path = "json/usuario/user_session_keys.json"
     comprobar_duplicados(path, username)
     add(path, ["Username", "Simetrica_cifrada", "Simetrica"], [username, simetrica_cifrada, simetrica])
 
-def añadir_simetrico(username, simetrica):
+def añadir_session_key(username, simetrica):
     path = "json/programa/session_keys.json"
     comprobar_duplicados(path, username)
     add(path, ["Username", "Simetrica"], [username, simetrica])
@@ -92,7 +96,7 @@ def remove_session_key(user):
     existente = True
     while existente:
         existente = remove(path, user)
-    path = "json/usuario/user_simetrico.json"
+    path = "json/usuario/user_session_keys.json"
     existente = True
     while existente:
         existente = remove(path, user)
@@ -138,7 +142,7 @@ def buscar_publica(user):
 
     if datos_existentes == []:
         print("No hay datos en el registro")
-        return False
+        return None
 
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
@@ -151,14 +155,14 @@ def buscar_privada(user):
     datos_existentes = abrir_archivo(path)
     if datos_existentes == []:
         print("No hay datos en el registro")
-        return False
+        return None
     
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
             return datos_existentes[i]["User_privada"]
     
 def buscar_simetrica(user):
-    path = "json/usuario/user_simetrico.json"
+    path = "json/usuario/user_session_keys.json"
     datos_existentes = abrir_archivo(path)
     if datos_existentes == []:
         print("No hay datos en el registro")
