@@ -63,10 +63,10 @@ def login_user():
         entry_data_name = Entry(screen_data, textvariable=data_name)
         entry_data_name.pack()
         Label(screen_data, text="Introduzca el archivo de audio").pack()
-        entry_data = Entry(screen_data, textvariable=data)
-        entry_data.pack()
-        # entry_data = Button(screen_data, text="Browse Folder", font =("Roboto", 14),command=browse)
+        # entry_data = Entry(screen_data, textvariable=data)
         # entry_data.pack()
+        entry_data = Button(screen_data, text="Browse Folder", font =("Roboto", 14),command=browse)
+        entry_data.pack()
         Label(screen_data, text="").pack()
         Button(screen_data, text="Enviar", width=14, height=1, command=añadir_archivo).pack()
         Button(screen_data, text="Recuperar archivo", width=14, height=1, command=ventana_recuperar).pack()
@@ -78,23 +78,24 @@ def login_user():
 def añadir_archivo():
     user = actual_username.get()
     data_name = entry_data_name.get()
-    data = entry_data.get()
-    # data = original_audio
-    print(data)
+    # data = entry_data.get()
+    data = original_audio
 
     # El mensaje es encriptado con la pública del usuario y la session key. Data_encrypt es una tupla que contiene el cifrado, el tag y la firma
-    data_encrypt, firma = encriptar_mensaje(user, data)
+    data_encrypt, firma, tag = encriptar_mensaje(user, data)
     # Los datos se desencriptan con la session key antes de guardarlos
 
     # print("data_encrypt:\n"+str(data_encrypt[0])+"\n"+str(data_encrypt[1])+"\n"+str(firma))
-    #se manda
-    data_simetrica = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
+    # El usuario envía el mensaje y el programa lo desencripta con la session_key
+    simetrica = buscar_session_key(user, True).encode()
+    data_simetrica = descifrado_simetrico(simetrica, data_encrypt[0], data_encrypt[1])
     comprobar_firma(user, firma, data_simetrica)
-    añadir_datos(user, data_name, data_simetrica.hex())
+    añadir_datos(user, data_name, data_simetrica.hex(), tag.hex())
 
 
     entry_data_name.delete(0, END)
-    entry_data.delete(0, END)
+    # entry_data.delete(0, END)
+    print("Tipo de dato", type(data_simetrica), type(data_simetrica.hex()))
 
     Label(screen_data, text="Datos guardados", fg="green", font=("Calibri", 11)).pack()
 
@@ -138,26 +139,29 @@ def recuperar_archivo():
     user = actual_username.get()
     data_name = return_data.get()
     # print("data_name:\n"+str(data_name))
-    data_simetrica_hex = buscar_dato(user, data_name)
-    data_simetrica = bytes.fromhex(data_simetrica_hex)
+    tag = bytes.fromhex(buscar_tag(user, data_name))
+    data_simetrica = bytes.fromhex(buscar_dato(user, data_name))
     # print("data:\n"+str(data_publica))
-    session_key = buscar_session_key(user)
+    session_key = buscar_session_key(user, True).encode()
     # print("simetrica:\n"+str(simetrica))
-    session_key_encode = session_key.encode()
     # print("simetrica_encode:\n"+str(simetrica_encode))
-    #El mensaje se firma con la publica que tenía
+    #El mensaje se firma con la privada del programa
     firma = firmar("programa", data_simetrica)
-    #El mensaje se encripta antes de ser enviado
-    data_encrypt = cifrado_simetrico(session_key_encode, data_simetrica)
+    #El mensaje se encripta antes de ser enviado con la session_key
+    data_encrypt = cifrado_simetrico(session_key, data_simetrica)
     # print("data_encrypt:\n"+str(data_encrypt[0]))
-    #Una vez llega, el mensaje es desencriptado con la simetrica y la privada
-    data_devuelta = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
+    #Una vez llega, el mensaje es desencriptado con la session_key y la simétrica del usuario
+    session_key = buscar_session_key(user, False).encode()
+    data_devuelta = descifrado_simetrico(session_key, data_encrypt[0], data_encrypt[1])
     comprobar_firma("programa", firma, data_devuelta)
     # print("data_devuelta:\n"+str(data_devuelta))
-    data_encode = descifrar_con_privada(user, data_devuelta)
+    simetrica = buscar_simetrica(user).encode()
+    data_encode = descifrado_simetrico(simetrica, data_devuelta, tag)
     # print("data_encode:\n"+str(data_encode))
     data_final = data_encode.decode()
+    print("tipo de data_final", type(data_final))
     print("data_final:\n"+str(data_final))
+    añadir_datos_recuperados(user, data_name, data_final)
 
 
 def register():

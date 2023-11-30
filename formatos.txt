@@ -1,23 +1,30 @@
-asimetrico.json:
+usuario/claves.json:
 - Username: str
 - User_privada: pem.decode()
 - User_publica: pem.decode()
+- User_simetrica: pem.decode()
 
-datos.json:
+programa/datos.json:
 - Username: str
 - Data_name: str
 - Data: hex
+- Tag: hex
 
-registro.json:
+programa/registro.json:
 - Username: str
 - Key: hex
 - salt: hex
 
-session_keys.json:
+programa/session_keys.json:
 - Username: str
 - Simetrica: pem.decode()
 
-user_simetrico.json:
+usuario/session_keys.json:
 - Username: str
 - Simetrica_cifrada: str(encode)
 - Simetrica: pem.decode()
+
+programa/claves.json:
+- Username: str
+- User_privada: pem.decode()
+- User_publica: pem.decode()

@@ -23,14 +23,14 @@ def browse(fernet):
     
     cifrado = fernet.encrypt(original_audio)
 
-    save_path="C:/Users/agued/Desktop/Cripto/Criptografia/documentos/"+ "prueba_encriptada" + ".mp3"
+    save_path="C:/home/alberto/Documentos/Criptografia/Criptografia/documentos/"+ "prueba_encriptada" + ".mp3"
     with open(save_path, 'wb') as enc_file:
         enc_file.write(cifrado)
     
     print("Audio encriptado y guardado")
 
 def recuperar(nombre, fernet):
-    read_path= "C:/Users/agued/Desktop/Cripto/Criptografia/documentos/"+ "prueba_encriptada" +".mp3"
+    read_path= "C:/home/alberto/Documentos/Criptografia/Criptografia/documentos/"+ "prueba_encriptada" +".mp3"
     with open(read_path, 'rb') as file:
         audio_c_after=file.read()
     

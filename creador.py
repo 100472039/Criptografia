@@ -65,24 +65,32 @@ def añadir_registro(usuario, key, salt):
     path = "json/programa/registro.json"
     add(path, ["Username", "key", "salt"], [usuario, key, salt])
 
-def añadir_datos(username, data_name, data):
+def añadir_datos(username, data_name, data, tag):
     path = "json/programa/datos.json"
+    add(path, ["Username", "Data_name", "Data", "Tag"], [username, data_name, data, tag])
+
+def añadir_datos_recuperados(username, data_name, data):
+    path = "json/usuario/datos_recuperados.json"
     add(path, ["Username", "Data_name", "Data"], [username, data_name, data])
 
+    path="/home/alberto/Documentos/Criptografia/Criptografia/json/usuario/" + data_name + ".mp3"
+    with open(path, 'wb') as file:
+        file.write(bytes.fromhex(data))
+
 def añadir_claves_programa(username, user_privada, user_publica):
-    path = "json/programa/asimetrico.json"
+    path = "json/programa/claves.json"
     # Comprobar que no hay valores repetidos
     comprobar_duplicados(path, username)
     add(path, ["Username", "User_privada", "User_publica"], [username, user_privada, user_publica])
 
 def añadir_claves_usuario(username, user_privada, user_publica, user_simetrica):
-    path = "json/usuario/asimetrico.json"
+    path = "json/usuario/claves.json"
     # Comprobar que no hay valores repetidos
     comprobar_duplicados(path, username)
     add(path, ["Username", "User_privada", "User_publica", "User_simetrica"], [username, user_privada, user_publica, user_simetrica])
 
 def añadir_user_session_keys(username, simetrica_cifrada, simetrica):
-    path = "json/usuario/user_session_keys.json"
+    path = "json/usuario/session_keys.json"
     comprobar_duplicados(path, username)
     add(path, ["Username", "Simetrica_cifrada", "Simetrica"], [username, simetrica_cifrada, simetrica])
 
@@ -96,7 +104,7 @@ def remove_session_key(user):
     existente = True
     while existente:
         existente = remove(path, user)
-    path = "json/usuario/user_session_keys.json"
+    path = "json/usuario/session_keys.json"
     existente = True
     while existente:
         existente = remove(path, user)
@@ -134,9 +142,9 @@ def buscar(user, newpassword):
         return False
     
 def buscar_publica(user):
-    path = "json/usuario/asimetrico.json"
+    path = "json/usuario/claves.json"
     if user == "programa":
-        path = "json/programa/asimetrico.json"
+        path = "json/programa/claves.json"
     # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe
     datos_existentes = abrir_archivo(path)
 
@@ -149,9 +157,9 @@ def buscar_publica(user):
             return datos_existentes[i]["User_publica"]
 
 def buscar_privada(user):
-    path = "json/usuario/asimetrico.json"
+    path = "json/usuario/claves.json"
     if user == "programa":
-        path = "json/programa/asimetrico.json"
+        path = "json/programa/claves.json"
     datos_existentes = abrir_archivo(path)
     if datos_existentes == []:
         print("No hay datos en el registro")
@@ -162,7 +170,7 @@ def buscar_privada(user):
             return datos_existentes[i]["User_privada"]
     
 def buscar_simetrica(user):
-    path = "json/usuario/user_session_keys.json"
+    path = "json/usuario/claves.json"
     datos_existentes = abrir_archivo(path)
     if datos_existentes == []:
         print("No hay datos en el registro")
@@ -170,10 +178,12 @@ def buscar_simetrica(user):
     
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
-            return datos_existentes[i]["Simetrica"]
+            return datos_existentes[i]["User_simetrica"]
 
-def buscar_session_key(user):
-    path = "json/programa/session_keys.json"
+def buscar_session_key(user, programa: bool):
+    path = "json/usuario/session_keys.json"
+    if programa:
+        path = "json/programa/session_keys.json"
     datos_existentes = abrir_archivo(path)
     if datos_existentes == []:
         print("No hay datos en el registro")
@@ -192,6 +202,16 @@ def buscar_dato(user, data_name):
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"] == user and datos_existentes[i]["Data_name"] == data_name:
             return datos_existentes[i]["Data"]
+
+def buscar_tag(user, data_name):
+    path = "json/programa/datos.json"
+    datos_existentes = abrir_archivo(path)
+    if datos_existentes == []:
+        print("No hay datos en el registro")
+    
+    for i in range(len(datos_existentes)):
+        if datos_existentes[i]["Username"] == user and datos_existentes[i]["Data_name"] == data_name:
+            return datos_existentes[i]["Tag"]
 
 def guardar_mensaje(user, mensaje):
     print("se ha guardado el mensaje correctamente")
