@@ -8,5 +8,10 @@
         "Username": "alberto",
         "key": "0babfd6430b4a2b2dd40d090261ed4998e34328fd55dd45d2ba9caf8f32e5388",
         "salt": "8bf9713ff60d64e58faa30d477797a14"
+    },
+    {
+        "Username": "agueda",
+        "key": "f55564b503cf1343c40c787a2b4cd7eb1ca2e165681a8a1a4aea44a163a9f014",
+        "salt": "fce8183e6becfae6ca49ec50b1a64c7a"
     }
 ]

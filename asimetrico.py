@@ -1,5 +1,3 @@
-import binascii
-import ast
 import sys
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import serialization
@@ -83,13 +81,10 @@ def cifrado_simetrico(simetrica, mensaje):
 
 
 # Descifrar simétricamente los datos y verificar la etiqueta de autenticación
-def descifrado_simetrico(user, cifrado, tag, firma):
+def descifrado_simetrico(user, cifrado, tag):
 
     simetrica = buscar_session_key(user)
     simetrica = simetrica.encode()
-
-    
-    comprobar_firma(user, firma, tag)
 
     try:
         h = hmac.HMAC(simetrica, hashes.SHA256(), backend=default_backend())
@@ -98,7 +93,7 @@ def descifrado_simetrico(user, cifrado, tag, firma):
 
         f = Fernet(simetrica)
         mensaje = f.decrypt(cifrado)
-        print(f'Mensaje descifrado simétricamente:\n{mensaje}')
+        # print(f'Mensaje descifrado simétricamente:\n{mensaje}')
         return mensaje
 
     except Exception:
@@ -108,7 +103,7 @@ def descifrado_simetrico(user, cifrado, tag, firma):
 def session_keys_generator(user):
 
     session_key = Fernet.generate_key()
-    print("session_key:\n"+str(session_key))
+    # print("session_key:\n"+str(session_key))
     session_key_decode = session_key.decode()
     añadir_simetrico(user, session_key_decode)
 
@@ -119,13 +114,13 @@ def encriptar_mensaje(user, mensaje):
     simetrica = buscar_simetrica(user)
     simetrica_encode = simetrica.encode()
     mensaje_publica = cifrar_con_publica(user, mensaje)
-    #mensaje_cifrado, tag=cifrado_simetrico(simetrica, mensaje_cifrado)
-    print("simetrica_encode:\n"+str(simetrica_encode))
-    print("mensaje_publica:\n"+str(mensaje_publica))
+    # Se firma el mensaje encriptado con la pública del usuario
+    firma = firmar(user, mensaje_publica)
+    # mensaje_cifrado, tag=cifrado_simetrico(simetrica, mensaje_cifrado)
+    # print("simetrica_encode:\n"+str(simetrica_encode))
+    # print("mensaje_publica:\n"+str(mensaje_publica))
     mensaje_publica_simetrica = cifrado_simetrico(simetrica_encode, mensaje_publica)
-    privada = buscar_privada(user)
-    firma = firmar(privada, mensaje_publica_simetrica[1])
-    print("mensaje_publica_simetrica:\n"+str(mensaje_publica_simetrica[0])+"\n"+str(mensaje_publica_simetrica[1]))
+    # print("mensaje_publica_simetrica:\n"+str(mensaje_publica_simetrica[0])+"\n"+str(mensaje_publica_simetrica[1]))
 
 
     return mensaje_publica_simetrica, firma
@@ -141,9 +136,11 @@ def encriptar_mensaje(user, mensaje):
 def generar_hash(user, data_name):
     clave = hashes.Hash(hashes.SHA256(), backend=default_backend())
 
-def firmar(privada, mensaje):
+def firmar(user, mensaje):
+    print("mensaje de entrada en firmar:\n"+str(mensaje))
     #from hex to pem
     #privada_pem=bytes.fromhex(privada_hex)
+    privada = buscar_privada(user)
     privada_pem=privada.encode()
     #from pem to key class
     privada_rsa = serialization.load_pem_private_key(
@@ -160,10 +157,12 @@ def firmar(privada, mensaje):
         ),
         hashes.SHA256()
     )
+    print("mensaje de salida en firmar:\n"+str(mensaje))
     return firma.hex()
 
 
 def comprobar_firma(user, firma, mensaje):
+    print("mensaje de entrada en comprobar firma:\n"+str(mensaje))
     #from hex to pem
     #publica_pem=bytes.fromhex(publica_hex)
     publica = buscar_publica(user)
@@ -185,7 +184,9 @@ def comprobar_firma(user, firma, mensaje):
             hashes.SHA256()
         )
         print("La firma es válida.")
+        print("mensaje de salida en comprobar firma:\n"+str(mensaje))
         #return True
     except:
         print("La firma no es válida.")
+        print("mensaje de salida en comprobar firma:\n"+str(mensaje))
         sys.exit(1)

@@ -1,5 +1,5 @@
-import json
 from tkinter import *
+from tkinter.filedialog import askopenfilename
 from creador import *
 from kdf import *
 from asimetrico import *
@@ -62,7 +62,9 @@ def login_user():
         entry_data_name = Entry(screen_data, textvariable=data_name)
         entry_data_name.pack()
         Label(screen_data, text="Introduzca el archivo de audio").pack()
-        entry_data = Entry(screen_data, textvariable=data)
+        # entry_data = Entry(screen_data, textvariable=data)
+        # entry_data.pack()
+        entry_data = Button(screen_data, text="Browse Folder", font =("Roboto", 14),command=browse)
         entry_data.pack()
         Label(screen_data, text="").pack()
         Button(screen_data, text="Enviar", width=14, height=1, command=añadir_archivo).pack()
@@ -75,15 +77,17 @@ def login_user():
 def añadir_archivo():
     user = actual_username.get()
     data_name = entry_data_name.get()
-    data = entry_data.get()
+    data = original_audio
+    print(data)
 
     # El mensaje es encriptado con la pública del usuario y la session key. Data_encrypt es una tupla que contiene el cifrado, el tag y la firma
     data_encrypt, firma = encriptar_mensaje(user, data)
     # Los datos se desencriptan con la session key antes de guardarlos
 
-    print("data_encrypt:\n"+str(data_encrypt[0])+"\n"+str(data_encrypt[1])+"\n"+str(firma))
+    # print("data_encrypt:\n"+str(data_encrypt[0])+"\n"+str(data_encrypt[1])+"\n"+str(firma))
     #se manda
-    data_publica = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1], firma)
+    data_publica = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
+    comprobar_firma(user, firma, data_publica)
     añadir_datos(user, data_name, data_publica.hex())
 
 
@@ -91,6 +95,19 @@ def añadir_archivo():
     entry_data.delete(0, END)
 
     Label(screen_data, text="Datos guardados", fg="green", font=("Calibri", 11)).pack()
+
+def browse():
+    global original_audio
+
+    read_path = askopenfilename(initialdir="/home/alberto/",
+        title="Select File", filetypes=(("Audio files", "*.mp3*"), ("All Files","*.*")))
+    # screen_data.configure(text="File Opened: "+read_path)
+
+    with open(read_path, 'rb') as file:
+        original_audio=file.read()
+    
+    print("Audio encriptado y guardado")
+    original_audio = original_audio.hex()
 
 def ventana_recuperar():
     user = actual_username.get()
@@ -118,24 +135,25 @@ def cerrar_sesion():
 def recuperar_archivo():
     user = actual_username.get()
     data_name = return_data.get()
-    print("data_name:\n"+str(data_name))
+    # print("data_name:\n"+str(data_name))
     data_publica_hex = buscar_dato(user, data_name)
     data_publica = bytes.fromhex(data_publica_hex)
-    print("data:\n"+str(data_publica))
+    # print("data:\n"+str(data_publica))
     simetrica = buscar_session_key(user)
-    print("simetrica:\n"+str(simetrica))
+    # print("simetrica:\n"+str(simetrica))
     simetrica_encode = simetrica.encode()
-    print("simetrica_encode:\n"+str(simetrica_encode))
+    # print("simetrica_encode:\n"+str(simetrica_encode))
+    #El mensaje se firma con la publica que tenía
+    firma = firmar("programa", data_publica)
     #El mensaje se encripta antes de ser enviado
     data_encrypt = cifrado_simetrico(simetrica_encode, data_publica)
-    privada = buscar_privada(user) #Cambiar a ordenador
-    firma = firmar(privada, data_encrypt[1])
-    print("data_encrypt:\n"+str(data_encrypt[0]))
+    # print("data_encrypt:\n"+str(data_encrypt[0]))
     #Una vez llega, el mensaje es desencriptado con la simetrica y la privada
-    data_devuelta = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1], firma)
-    print("data_devuelta:\n"+str(data_devuelta))
+    data_devuelta = descifrado_simetrico(user, data_encrypt[0], data_encrypt[1])
+    comprobar_firma("programa", firma, data_devuelta)
+    # print("data_devuelta:\n"+str(data_devuelta))
     data_encode = descifrar_con_privada(user, data_devuelta)
-    print("data_encode:\n"+str(data_encode))
+    # print("data_encode:\n"+str(data_encode))
     data_final = data_encode.decode()
     print("data_final:\n"+str(data_final))
 
@@ -188,6 +206,9 @@ def login():
 
 
 def main_screen():
+    programa_privada, programa_publica = generar_asimetrico()
+    añadir_asimetrico("programa", programa_privada, programa_publica)
+
     global screen
     screen = Tk()
     screen.geometry("300x250")
