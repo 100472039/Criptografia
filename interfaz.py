@@ -48,6 +48,10 @@ def login_user():
         session_key = session_keys_generator(user)
         publica = buscar_publica(user, True).encode()
         session_key_cifrada = cifrar_con_publica(publica, session_key)
+        firma = firmar("programa", session_key_cifrada)
+        # La session_key cifrada y la firma se envían al usuario
+        publica = buscar_publica("programa", False).encode()
+        comprobar_firma(publica, firma, session_key_cifrada)
         session_key_descifrada = descifrar_con_privada(user, session_key_cifrada)
         añadir_user_session_keys(user, str(session_key_cifrada), session_key_descifrada.decode())
         
@@ -106,6 +110,7 @@ def browse():
 def ventana_recuperar():
     user = actual_username.get()
     global return_data
+    global screen_data_recover
     data_name = StringVar()
 
     screen_data.destroy()
@@ -129,25 +134,30 @@ def cerrar_sesion():
 def recuperar_archivo():
     user = actual_username.get()
     data_name = return_data.get()
-    tag = bytes.fromhex(buscar_tag(user, data_name))
-    data_simetrica = bytes.fromhex(buscar_dato(user, data_name))
-    session_key = buscar_session_key(user, True).encode()
-    #El mensaje se firma con la privada del programa
-    firma = firmar("programa", data_simetrica)
-    #El mensaje se encripta antes de ser enviado con la session_key
-    data_encrypt = cifrado_simetrico(session_key, data_simetrica)
-    #Una vez llega, el mensaje es desencriptado con la session_key y la simétrica del usuario
-    session_key = buscar_session_key(user, False).encode()
-    data_devuelta = descifrado_simetrico(session_key, data_encrypt[0], data_encrypt[1])
-    publica = buscar_publica("programa", False).encode()
-    comprobar_firma(publica, firma, data_devuelta)
-    simetrica = buscar_simetrica(user).encode()
-    data_encode = descifrado_simetrico(simetrica, data_devuelta, tag)
-    data_final = data_encode.decode()
-    añadir_datos_recuperados(user, data_name, data_final)
-    # media = vlc.MediaPlayer("/home/alberto/Documentos/Criptografia/Criptografia/json/usuario/"+data_name+".mp3")
-    # media.play()
-    # playsound.playsound("/home/alberto/Documentos/Criptografia/Criptografia/json/usuario/"+data_name+".mp3")
+
+    if buscar_dato(user, data_name) != None:
+        tag = bytes.fromhex(buscar_tag(user, data_name))
+        data_simetrica = bytes.fromhex(buscar_dato(user, data_name))
+        session_key = buscar_session_key(user, True).encode()
+        #El mensaje se firma con la privada del programa
+        firma = firmar("programa", data_simetrica)
+        #El mensaje se encripta antes de ser enviado con la session_key
+        data_encrypt = cifrado_simetrico(session_key, data_simetrica)
+        #Una vez llega, el mensaje es desencriptado con la session_key y la simétrica del usuario
+        session_key = buscar_session_key(user, False).encode()
+        data_devuelta = descifrado_simetrico(session_key, data_encrypt[0], data_encrypt[1])
+        publica = buscar_publica("programa", False).encode()
+        comprobar_firma(publica, firma, data_devuelta)
+        simetrica = buscar_simetrica(user).encode()
+        data_encode = descifrado_simetrico(simetrica, data_devuelta, tag)
+        data_final = data_encode.decode()
+        añadir_datos_recuperados(user, data_name, data_final)
+        # media = vlc.MediaPlayer("/home/alberto/Documentos/Criptografia/Criptografia/json/usuario/"+data_name+".mp3")
+        # media.play()
+        # playsound.playsound("/home/alberto/Documentos/Criptografia/Criptografia/json/usuario/"+data_name+".mp3")
+        Label(screen_data_recover, text="Archivo devuelto correctamente", fg="green", font=("Calibri", 11)).pack()
+    else:
+        Label(screen_data_recover, text="Nombre de archivo incorrecto", fg="red", font=("Calibri", 11)).pack()
 
 
 def register():

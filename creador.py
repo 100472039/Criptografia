@@ -206,6 +206,7 @@ def buscar_dato(user, data_name):
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"] == user and datos_existentes[i]["Data_name"] == data_name:
             return datos_existentes[i]["Data"]
+    return None
 
 def buscar_tag(user, data_name):
     path = "json/programa/datos.json"
