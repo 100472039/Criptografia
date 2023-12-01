@@ -41,7 +41,6 @@ def remove(path, user):
         if datos_existentes[i]["Username"] == user:
             #Eliminar diccionario de la lista
             del datos_existentes[i]
-            #print(datos_existentes[i]["Simetrica"])
             print("Datos eliminados del archivo JSON correctamente")
             # Escribir el diccionario actualizado de vuelta al archivo JSON
             with open(path, "w") as archivo_json:
@@ -61,9 +60,9 @@ def comprobar_duplicados(path, user):
     with open(path, "w") as archivo_json:
         json.dump(datos_existentes, archivo_json, indent=4)
 
-def añadir_registro(usuario, key, salt):
+def añadir_registro(usuario, key, salt, user_publica):
     path = "json/programa/registro.json"
-    add(path, ["Username", "key", "salt"], [usuario, key, salt])
+    add(path, ["Username", "key", "salt", "User_publica"], [usuario, key, salt, user_publica])
 
 def añadir_datos(username, data_name, data, tag):
     path = "json/programa/datos.json"
@@ -76,6 +75,10 @@ def añadir_datos_recuperados(username, data_name, data):
     path="/home/alberto/Documentos/Criptografia/Criptografia/json/usuario/" + data_name + ".mp3"
     with open(path, 'wb') as file:
         file.write(bytes.fromhex(data))
+
+def añadir_certificado(nombre, publica, certificado, padre):
+    path = "json/autoridades/certificados.json"
+    add(path, ["Username", "User_publica", "Certificado", "Padre"], [nombre, publica, certificado, padre])
 
 def añadir_claves_programa(username, user_privada, user_publica):
     path = "json/programa/claves.json"
@@ -119,7 +122,6 @@ def buscar(user, newpassword):
         print("No hay datos en el registro")
         return False
     
-
     for i in range(len(datos_existentes)):
         if datos_existentes[i]["Username"]==user:
             key=bytes.fromhex(datos_existentes[i]["key"])
@@ -141,8 +143,10 @@ def buscar(user, newpassword):
     else:
         return False
     
-def buscar_publica(user):
+def buscar_publica(user, programa: bool):
     path = "json/usuario/claves.json"
+    if programa:
+        path = "json/programa/registro.json"
     if user == "programa":
         path = "json/programa/claves.json"
     # Cargar el JSON existente desde el archivo o crear un diccionario vacío si el archivo no existe

@@ -3,6 +3,9 @@ from tkinter.filedialog import askopenfilename
 from creador import *
 from kdf import *
 from asimetrico import *
+import playsound
+import vlc
+from certificados import *
 
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import serialization
@@ -16,14 +19,19 @@ from cryptography.hazmat.backends import default_backend
 def register_user():
     username_info = username.get()
     password_info = password.get()
-    # simmetric_info = new_simmetric.get()
-
 
     key, salt = derivar(password_info)
     user_privada, user_publica = generar_asimetrico()
     user_simetrica = generar_simetrico()
-    añadir_registro(username_info, key, salt)
+    añadir_registro(username_info, key, salt, user_publica)
     añadir_claves_usuario(username_info, user_privada, user_publica, user_simetrica)
+
+    privada_bytes = user_privada.encode()
+    privada_rsa = serialization.load_pem_private_key(privada_bytes, password=None, backend=default_backend())
+    user_certificado = crear_usuario(username_info, privada_rsa, autoridades[3], autoridades[4], certificados[3], certificados[4])
+    certificados.append(user_certificado)
+    comprobar_certificado(user_certificado)
+
 
     new_username.delete(0, END)
     new_password.delete(0, END)
@@ -43,14 +51,10 @@ def login_user():
     if buscar(user, newpassword):
 
         session_key = session_keys_generator(user)
-        # print("session_key:\n"+str(session_key))
-        session_key_cifrada = cifrar_con_publica(user, session_key)
-        # print("session_key_cifrada:\n"+str(session_key_cifrada))
+        publica = buscar_publica(user, True).encode()
+        session_key_cifrada = cifrar_con_publica(publica, session_key)
         session_key_descifrada = descifrar_con_privada(user, session_key_cifrada)
-        # print("session_key_descifrada:\n"+str(session_key_descifrada))
         añadir_user_session_keys(user, str(session_key_cifrada), session_key_descifrada.decode())
-        #simetrico = descifrar_con_privada(user, session_key)
-        #añadir_simetrico(user, session_key, simetrico)
         
         screen_login.destroy()
         screen_data = Toplevel(screen)
@@ -63,8 +67,6 @@ def login_user():
         entry_data_name = Entry(screen_data, textvariable=data_name)
         entry_data_name.pack()
         Label(screen_data, text="Introduzca el archivo de audio").pack()
-        # entry_data = Entry(screen_data, textvariable=data)
-        # entry_data.pack()
         entry_data = Button(screen_data, text="Browse Folder", font =("Roboto", 14),command=browse)
         entry_data.pack()
         Label(screen_data, text="").pack()
@@ -78,33 +80,27 @@ def login_user():
 def añadir_archivo():
     user = actual_username.get()
     data_name = entry_data_name.get()
-    # data = entry_data.get()
     data = original_audio
 
     # El mensaje es encriptado con la pública del usuario y la session key. Data_encrypt es una tupla que contiene el cifrado, el tag y la firma
     data_encrypt, firma, tag = encriptar_mensaje(user, data)
     # Los datos se desencriptan con la session key antes de guardarlos
-
-    # print("data_encrypt:\n"+str(data_encrypt[0])+"\n"+str(data_encrypt[1])+"\n"+str(firma))
-    # El usuario envía el mensaje y el programa lo desencripta con la session_key
     simetrica = buscar_session_key(user, True).encode()
     data_simetrica = descifrado_simetrico(simetrica, data_encrypt[0], data_encrypt[1])
-    comprobar_firma(user, firma, data_simetrica)
+    publica = buscar_publica(user, True).encode()
+    comprobar_firma(publica, firma, data_simetrica)
     añadir_datos(user, data_name, data_simetrica.hex(), tag.hex())
 
 
     entry_data_name.delete(0, END)
-    # entry_data.delete(0, END)
-    print("Tipo de dato", type(data_simetrica), type(data_simetrica.hex()))
 
     Label(screen_data, text="Datos guardados", fg="green", font=("Calibri", 11)).pack()
 
 def browse():
     global original_audio
 
-    read_path = askopenfilename(initialdir="/home/alberto/",
+    read_path = askopenfilename(initialdir="",
         title="Select File", filetypes=(("Audio files", "*.mp3*"), ("All Files","*.*")))
-    # screen_data.configure(text="File Opened: "+read_path)
 
     with open(read_path, 'rb') as file:
         original_audio=file.read()
@@ -138,30 +134,25 @@ def cerrar_sesion():
 def recuperar_archivo():
     user = actual_username.get()
     data_name = return_data.get()
-    # print("data_name:\n"+str(data_name))
     tag = bytes.fromhex(buscar_tag(user, data_name))
     data_simetrica = bytes.fromhex(buscar_dato(user, data_name))
-    # print("data:\n"+str(data_publica))
     session_key = buscar_session_key(user, True).encode()
-    # print("simetrica:\n"+str(simetrica))
-    # print("simetrica_encode:\n"+str(simetrica_encode))
     #El mensaje se firma con la privada del programa
     firma = firmar("programa", data_simetrica)
     #El mensaje se encripta antes de ser enviado con la session_key
     data_encrypt = cifrado_simetrico(session_key, data_simetrica)
-    # print("data_encrypt:\n"+str(data_encrypt[0]))
     #Una vez llega, el mensaje es desencriptado con la session_key y la simétrica del usuario
     session_key = buscar_session_key(user, False).encode()
     data_devuelta = descifrado_simetrico(session_key, data_encrypt[0], data_encrypt[1])
-    comprobar_firma("programa", firma, data_devuelta)
-    # print("data_devuelta:\n"+str(data_devuelta))
+    publica = buscar_publica("programa", False).encode()
+    comprobar_firma(publica, firma, data_devuelta)
     simetrica = buscar_simetrica(user).encode()
     data_encode = descifrado_simetrico(simetrica, data_devuelta, tag)
-    # print("data_encode:\n"+str(data_encode))
     data_final = data_encode.decode()
-    print("tipo de data_final", type(data_final))
-    print("data_final:\n"+str(data_final))
     añadir_datos_recuperados(user, data_name, data_final)
+    # media = vlc.MediaPlayer("/home/alberto/Documentos/Criptografia/Criptografia/json/usuario/"+data_name+".mp3")
+    # media.play()
+    # playsound.playsound("/home/alberto/Documentos/Criptografia/Criptografia/json/usuario/"+data_name+".mp3")
 
 
 def register():
@@ -212,9 +203,19 @@ def login():
 
 
 def main_screen():
+    global certificados
+    global autoridades
     programa_privada, programa_publica = generar_asimetrico()
     añadir_claves_programa("programa", programa_privada, programa_publica)
 
+    autoridades, certificados = crear_autoridades()
+
+    privada_bytes = programa_privada.encode()
+    privada_rsa = serialization.load_pem_private_key(privada_bytes, password=None, backend=default_backend())
+    user_certificado = crear_usuario("programa", privada_rsa, autoridades, certificados)
+    certificados.append(user_certificado)
+    comprobar_certificado(user_certificado)
+    
     global screen
     screen = Tk()
     screen.geometry("300x250")

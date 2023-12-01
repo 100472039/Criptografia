@@ -19,7 +19,6 @@ def generar_asimetrico():
     user_publica_pem = rsa_pem_public(user_publica)
     user_privada_str = user_privada_pem.decode('utf-8')
     user_publica_str = user_publica_pem.decode('utf-8')
-    # print(type(user_publica_pem))
     return user_privada_str, user_publica_str
 
 def rsa_pem_private(clave):
@@ -37,10 +36,8 @@ def rsa_pem_public(clave):
 
 
 # Mandar asimétricamente la clave simétrica
-def cifrar_con_publica(user, mensaje):
-    publica = buscar_publica(user)
-    publica_bytes = publica.encode('utf-8')
-    publica_rsa = serialization.load_pem_public_key(publica_bytes, backend=default_backend())
+def cifrar_con_publica(publica, mensaje):
+    publica_rsa = serialization.load_pem_public_key(publica, backend=default_backend())
     cifrado = publica_rsa.encrypt(
         mensaje.encode(),
         padding.OAEP(
@@ -70,7 +67,6 @@ def descifrar_con_privada(user, cifrado):
 
 # Cifrar simétricamente los datos con etiqueta de autenticación
 def cifrado_simetrico(simetrica: bytes, mensaje):
-    print("simetrica1", simetrica)
     f = Fernet(simetrica)
     cifrado = f.encrypt(mensaje)
 
@@ -83,20 +79,18 @@ def cifrado_simetrico(simetrica: bytes, mensaje):
 
 # Descifrar simétricamente los datos y verificar la etiqueta de autenticación
 def descifrado_simetrico(simetrica: bytes, cifrado, tag):
-    print("simetrica2", simetrica)
-    # try:
-    h = hmac.HMAC(simetrica, hashes.SHA256(), backend=default_backend())
-    h.update(cifrado)
-    h.verify(tag)
+    try:
+        h = hmac.HMAC(simetrica, hashes.SHA256(), backend=default_backend())
+        h.update(cifrado)
+        h.verify(tag)
 
-    f = Fernet(simetrica)
-    mensaje = f.decrypt(cifrado)
-    # print(f'Mensaje descifrado simétricamente:\n{mensaje}')
-    return mensaje
+        f = Fernet(simetrica)
+        mensaje = f.decrypt(cifrado)
+        return mensaje
 
-    # except Exception:
-    #     print('Error al descifrar el mensaje o verificar la autenticidad')
-    #     sys.exit(1)
+    except Exception:
+        print('Error al descifrar el mensaje o verificar la autenticidad')
+        sys.exit(1)
 
 def generar_simetrico():
     simetrico = Fernet.generate_key()
@@ -106,7 +100,6 @@ def generar_simetrico():
 def session_keys_generator(user):
 
     session_key = Fernet.generate_key()
-    # print("session_key:\n"+str(session_key))
     session_key_decode = session_key.decode()
     añadir_session_key(user, session_key_decode)
 
@@ -119,7 +112,6 @@ def encriptar_mensaje(user, mensaje):
     session_key = buscar_session_key(user, False)
     session_key_encode = session_key.encode()
     # Se encripta el mensaje con la simétrica del usuario
-    # mensaje_publica = cifrar_con_publica(user, mensaje)
     mensaje_simetrica = cifrado_simetrico(simetrica_encode, mensaje.encode())
     # Se firma el mensaje encriptado con la privada del usuario
     firma = firmar(user, mensaje_simetrica[0])
@@ -128,17 +120,10 @@ def encriptar_mensaje(user, mensaje):
 
     return mensaje_simetrica_simetrica, firma, mensaje_simetrica[1]
 
-
-def generar_hash(user, data_name):
-    clave = hashes.Hash(hashes.SHA256(), backend=default_backend())
-
 def firmar(user, mensaje):
-    # print("mensaje de entrada en firmar:\n"+str(mensaje))
-    #from hex to pem
-    #privada_pem=bytes.fromhex(privada_hex)
     privada = buscar_privada(user)
     privada_pem=privada.encode()
-    #from pem to key class
+    # Pasamo de formato pem a key class
     privada_rsa = serialization.load_pem_private_key(
         privada_pem,
         password=None,
@@ -153,19 +138,13 @@ def firmar(user, mensaje):
         ),
         hashes.SHA256()
     )
-    # print("mensaje de salida en firmar:\n"+str(mensaje))
     return firma.hex()
 
 
-def comprobar_firma(user, firma, mensaje):
-    # print("mensaje de entrada en comprobar firma:\n"+str(mensaje))
-    #from hex to pem
-    #publica_pem=bytes.fromhex(publica_hex)
-    publica = buscar_publica(user)
-    publica_pem=publica.encode()
-    #from pem to key class  
+def comprobar_firma(publica, firma, mensaje):
+    # Pasamo de formato pem a key class
     publica_rsa = serialization.load_pem_public_key(
-        publica_pem,
+        publica,
         backend=default_backend()
     )
     firma=bytes.fromhex(firma)
@@ -180,9 +159,6 @@ def comprobar_firma(user, firma, mensaje):
             hashes.SHA256()
         )
         print("La firma es válida.")
-        # print("mensaje de salida en comprobar firma:\n"+str(mensaje))
-        #return True
     except:
         print("La firma no es válida.")
-        # print("mensaje de salida en comprobar firma:\n"+str(mensaje))
         sys.exit(1)

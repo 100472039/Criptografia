@@ -1,7 +1,14 @@
 [
     {
         "Username": "alberto",
-        "key": "a6822ade4fb6e96f1fc4a8ab94b4cc33e595e3bb7e2cd402e9e3c93caa566262",
-        "salt": "739afa2d43deca5c9836968168cca853"
+        "key": "83fb3f0f7c47ce6c0998bf81ea134a23c119cc00e0394e5e21cdfc9deb32e84b",
+        "salt": "b6742229f9964049284fc3179eb4027c",
+        "User_publica": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAn/hqYAqBUZxpsGJrqhT8\nzy4/FwvO2V2DN21ukN00ay23FBaDAxxNEAKz87oofRedjS7OJFbSuPUWU1rcclef\nf5A+dkm4nrfZ+zYe5V/GD4V43JQPQUUt6ZrgnxHCbd7dhBzEC4wvQFnzlyBqfhkH\nF9lKOKtDuqgigMsmFNS2L2eWw0rGSn4f7gC9pQoya0uZN+ukhq6POq6PqW5xKPvv\n2GL49O2QhSYJAlC+zvo1jQxY/TYcjnY7hYTKvOhfV4Un3j01WgFu+22Qh2DtoPRS\nwfYaM848iusIoXhR6AmdYJNipoFY58uPxdxYDUKQaWVIoxZ/osQLg4DEyUz5orN/\nEwIDAQAB\n-----END PUBLIC KEY-----\n"
+    },
+    {
+        "Username": "nico",
+        "key": "0cbc0745402c6ccb441e32f5c7a90ff25ceb3050631cdc8b0bb841ba535acfdb",
+        "salt": "286be725e173a84cba530a196b2d14dc",
+        "User_publica": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArJCGV5NGVr+dlML234jG\nYg22nfg5EeAIGTPsmW7AMUjbAC04BFSsuG7fhw60xCO6C0XapLnf05bjsYianmAL\nt2arnRt6nIpeU2OuvNRf7zU2JDPFmXMy4nvbhVgS5U38e+jFWskU8zDQjWmvS3WC\n9vzgIrCt4ghRzYrMWnGWNdUi86jNIIo5p6R4qDwmnqj8eLMtWc2lKLmhFKu4/8G/\nphraONmFCNsphfo3j4vn9zUOdil7lrPJ3ALE7k8HdiDyrhvuK0zCZjM10Ml74S1L\nDYTuWvQM8NAKmbY1e9caPqNhVmtRPqw5YDQi82TYHocyMSv/mcu3pqpSydXDLzPr\nJQIDAQAB\n-----END PUBLIC KEY-----\n"
     }
 ]
