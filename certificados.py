@@ -4,7 +4,6 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric import rsa
 import datetime
-from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import padding
 import random
@@ -204,22 +203,3 @@ def comprobar_certificado(nodo: certificado):
         if cert_correcto(nodo.cert, nodo.padre.pu):
             print("Certificado de", nodo.name, "es válido")
             comprobar_certificado(nodo.padre)
-    
-
-a, c = crear_autoridades()
-
-pr0 = rsa.generate_private_key(
-    public_exponent=65537,
-    key_size=2048,
-    )
-
-c0=crear_usuario("Alberto", pr0, a, c)
-c1=crear_usuario("Agueda", pr0, a, c)
-
-
-
-comprobar_certificado(c0)
-comprobar_certificado(c1)
-
-
-

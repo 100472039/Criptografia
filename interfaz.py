@@ -7,12 +7,7 @@ import playsound
 import vlc
 from certificados import *
 
-from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.primitives import hmac
 from cryptography.hazmat.backends import default_backend
 
 
@@ -28,7 +23,7 @@ def register_user():
 
     privada_bytes = user_privada.encode()
     privada_rsa = serialization.load_pem_private_key(privada_bytes, password=None, backend=default_backend())
-    user_certificado = crear_usuario(username_info, privada_rsa, autoridades[3], autoridades[4], certificados[3], certificados[4])
+    user_certificado = crear_usuario(username_info, privada_rsa, autoridades, certificados)
     certificados.append(user_certificado)
     comprobar_certificado(user_certificado)
 
